@@ -1,213 +1,78 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Rifas da Formatura</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 5px;
-  }
-
-  .maiores-compradores {
-    max-width: 900px;
-    margin: 0 auto 30px auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    padding: 20px 30px;
-    text-align: center;
-  }
-
-  .maiores-compradores h2 {
-    margin-top: 0;
-    color: #2c3e50;
-  }
-
-  .maiores-compradores ol {
-    padding-left: 1.2rem;
-    font-size: 1.1rem;
-    color: #555;
-    max-width: 400px;
-    margin: auto;
-    text-align: left;
-  }
-
-  .maiores-compradores li {
-    margin-bottom: 8px;
-  }
-
-  .premios {
-    max-width: 900px;
-    margin: 0 auto 30px auto;
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-    flex-wrap: wrap;
-  }
-
-  .premio {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    padding: 20px;
-    flex: 1 1 280px;
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
-
-  .premio:hover {
-    transform: translateY(-6px);
-  }
-
-  .premio img {
-    width: 120px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-  }
-
-  .premio h2 {
-    font-size: 1.4rem;
-    margin-bottom: 8px;
-    color: #2c3e50;
-  }
-
-  .premio p {
-    font-size: 1rem;
-    color: #555;
-  }
-
-  .rifas {
-    max-width: 900px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-    gap: 8px;
-  }
-
-  .rifa {
-    background-color: #d1f0d1;
-    border: 1px solid #8bc34a;
-    border-radius: 6px;
-    height: 70px;
-    text-align: center;
-    font-weight: 600;
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: background-color 0.3s;
-  }
-
-  .rifa:hover {
-    filter: brightness(0.95);
-  }
-
-  .reservada {
-    background-color: #ffccd0;
-    border-color: #e57373;
-  }
-
-  .aguardando {
-    background-color: #fff3cd;
-    border-color: #ffc107;
-  }
-
-  .popup, .overlay {
-    display: none;
-  }
-
-  .overlay {
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.5);
-    z-index: 999;
-  }
-
-  .popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 25px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    border-radius: 14px;
-    z-index: 1000;
-    max-width: 320px;
-    text-align: center;
-  }
-
-  .popup input {
-    width: 90%;
-    padding: 8px;
-    margin: 8px 0;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-
-  .popup button {
-    margin-top: 12px;
-    padding: 10px 18px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-  }
-
-  .popup button:hover {
-    background-color: #388e3c;
-  }
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rifas da Formatura</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    .rifas {
+      max-width: 900px;
+      margin: 20px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+      gap: 8px;
+    }
+    .rifa {
+      background-color: #d1f0d1;
+      border-radius: 6px;
+      border: 1px solid #8bc34a;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .rifa:hover {
+      filter: brightness(0.95);
+    }
+    .rifa.reservada {
+      background-color: #ffccd0;
+      border-color: #e57373;
+      color: #900;
+      cursor: not-allowed;
+    }
+    .rifa.selecionada {
+      background-color: #ffd54f;
+      border-color: #ffb300;
+    }
+    #reservar-btn {
+      display: none;
+      margin: 20px auto;
+      padding: 12px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      text-align: center;
+      max-width: 300px;
+    }
+    #reservar-btn:hover {
+      background-color: #388e3c;
+    }
+  </style>
 </head>
 <body>
+  <h1>Rifas da Formatura</h1>
+  <div class="rifas" id="rifas-container"></div>
+  <button id="reservar-btn">Reservar Rifas Selecionadas</button>
 
-<div class="maiores-compradores">
-  <h2>Ranking dos 5 Maiores Compradores</h2>
-  <ol id="ranking-list"></ol>
-</div>
-
-<div class="premios">
-  <div class="premio">
-    <img src="https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_hero.png" alt="iPhone 15">
-    <h2>1º Lugar</h2>
-    <p>iPhone 15</p>
-  </div>
-  <div class="premio">
-    <img src="https://m.media-amazon.com/images/I/41ZieyJmyvL._AC_SX679_.jpg" alt="Cesta de Chocolates">
-    <h2>2º Lugar</h2>
-    <p>Cesta de Chocolates Cacau Show</p>
-  </div>
-</div>
-
-<h1>Rifas Formatura</h1>
-<div class="rifas" id="rifas-container"></div>
-
-<div class="overlay" id="overlay"></div>
-<div class="popup" id="popup">
-  <h3>Reservar Rifa</h3>
-  <input type="text" id="nome" placeholder="Seu nome">
-  <input type="text" id="telefone" placeholder="Seu telefone">
-  <div id="selected-rifa" style="margin-top: 10px; font-weight: bold;"></div>
-  <button onclick="enviarWhatsApp()">Reservar via WhatsApp</button>
-</div>
-
-<script>
-  const rifasReservadas = {
+  <script>
+    const rifasReservadas = {
     "0975": "Mara Marques",
     "0830": "Mara Marques",
     "0793": "Thiago Marques",
@@ -298,81 +163,42 @@
     "0009": "Rita Martins",
   };
 
-  const contagemCompradores = {};
-  for(const num in rifasReservadas){
-    const comprador = rifasReservadas[num];
-    contagemCompradores[comprador] = (contagemCompradores[comprador] || 0) + 1;
-  }
+    const container = document.getElementById("rifas-container");
+    const reservarBtn = document.getElementById("reservar-btn");
+    const selecionadas = new Set();
 
-  const ranking = Object.entries(contagemCompradores)
-    .sort((a,b) => b[1] - a[1])
-    .slice(0,5);
-
-  const rankingList = document.getElementById('ranking-list');
-  ranking.forEach(([nome, qtd]) => {
-    const li = document.createElement('li');
-    li.textContent = `${nome} — ${qtd} rifas`;
-    rankingList.appendChild(li);
-  });
-
-  const totalRifas = 2000;
-  const container = document.getElementById('rifas-container');
-  const overlay = document.getElementById('overlay');
-  const popup = document.getElementById('popup');
-  const selectedRifa = document.getElementById('selected-rifa');
-  let rifaSelecionada = "";
-
-  function closePopup() {
-    popup.style.display = 'none';
-    overlay.style.display = 'none';
-  }
-
-  overlay.addEventListener('click', closePopup);
-
-  for(let i=1; i <= totalRifas; i++) {
-    const numStr = i.toString().padStart(4, '0');
-    const div = document.createElement('div');
-    div.classList.add('rifa');
-
-    if(rifasReservadas[numStr]) {
-      div.classList.add('reservada');
-      div.innerHTML = `${numStr}<br><small>${rifasReservadas[numStr]}</small>`;
-    } else {
-      div.title = "Clique para reservar";
+    for (let i = 1; i <= 2000; i++) {
+      const numStr = i.toString().padStart(4, "0");
+      const div = document.createElement("div");
+      div.className = "rifa";
       div.textContent = numStr;
-      div.addEventListener('click', () => {
-        rifaSelecionada = numStr;
-        selectedRifa.textContent = `Rifa selecionada: #${rifaSelecionada}`;
-        popup.style.display = 'block';
-        overlay.style.display = 'block';
-      });
+
+      if (rifasReservadas[numStr]) {
+        div.classList.add("reservada");
+        div.title = `Reservada por ${rifasReservadas[numStr]}`;
+      } else {
+        div.addEventListener("click", () => {
+          if (div.classList.contains("selecionada")) {
+            div.classList.remove("selecionada");
+            selecionadas.delete(numStr);
+          } else {
+            div.classList.add("selecionada");
+            selecionadas.add(numStr);
+          }
+          reservarBtn.style.display = selecionadas.size > 0 ? 'block' : 'none';
+        });
+      }
+
+      container.appendChild(div);
     }
-    container.appendChild(div);
-  }
 
-  function enviarWhatsApp() {
-    const nome = document.getElementById('nome').value.trim();
-    const telefone = document.getElementById('telefone').value.trim();
-
-    if(!nome || !telefone) {
-      alert("Por favor, preencha seu nome e telefone.");
-      return;
-    }
-
-    const msg = `Olá! Gostaria de reservar a rifa nº ${rifaSelecionada}.\n\n👤 Nome: ${nome}\n📞 Telefone: ${telefone}\n💸 Valor: R$10,00\n\nSegue o comprovante do pagamento.`;
-    const numero = "5551981370547";
-    const url = `https://wa.me/${numero}?text=${encodeURIComponent(msg)}`;
-
-    window.open(url, "_blank");
-    closePopup();
-
-    // Marcar como aguardando (opcional)
-    const rifaDiv = [...document.querySelectorAll('.rifa')].find(d => d.textContent.includes(rifaSelecionada));
-    if (rifaDiv) {
-      rifaDiv.classList.add("aguardando");
-      rifaDiv.innerHTML = `${rifaSelecionada}<br><small>Aguardando...</small>`;
-    }
-  }
-</script>
+    reservarBtn.addEventListener("click", () => {
+      const numeros = Array.from(selecionadas);
+      const mensagem = `Olá! Gostaria de reservar as seguintes rifas da formatura:\n\n${numeros.join(", ")}\n\nValor total: R$${(numeros.length * 10).toFixed(2)}\n\nSegue comprovante.`;
+      const numeroWhatsApp = "5551981370547";
+      const link = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+      window.open(link, "_blank");
+    });
+  </script>
 </body>
 </html>
