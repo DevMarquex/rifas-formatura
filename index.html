@@ -179,7 +179,7 @@
   <div class="premio">
     <img src="https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_hero.png" alt="iPhone 15" />
     <h2>1º Lugar</h2>
-    <p>iPhone 15 128GB</p>
+    <p>iPhone 15</p>
   </div>
   <div class="premio">
     <img src="https://m.media-amazon.com/images/I/41ZieyJmyvL._AC_SX679_.jpg" alt="Cesta de Chocolates Cacau Show" />
@@ -189,9 +189,6 @@
 </div>
 
 <h1>Rifas Formatura</h1>
-
-<!-- Contador de rifas vendidas/disponíveis -->
-<div id="contador" style="text-align:center; margin-bottom: 20px; font-size: 18px; color: #444;"></div>
 
 <div class="rifas" id="rifas-container"></div>
 
@@ -283,10 +280,6 @@
     "1992": "Kimberly Iwanczuk",
     "0906": "Lucas",
     "0603": "Lucas"
-    "0013": "Allan Pereira",
-    "0022": "Allan Pereira",
-    "0009": "Rita Martins",
-
   };
 
   // Contar quantas rifas cada comprador reservou
@@ -296,14 +289,16 @@
     contagemCompradores[comprador] = (contagemCompradores[comprador] || 0) + 1;
   }
 
+  // Criar array e ordenar do maior para o menor
   const ranking = Object.entries(contagemCompradores)
     .sort((a,b) => b[1] - a[1])
     .slice(0,5);
 
+  // Preencher lista no HTML
   const rankingList = document.getElementById('ranking-list');
   ranking.forEach(([nome, qtd]) => {
     const li = document.createElement('li');
-    li.textContent = `${nome} — ${qtd} rifas`;
+    li.textContent = ${nome} — ${qtd} rifas;
     rankingList.appendChild(li);
   });
 
@@ -312,7 +307,6 @@
   const popup = document.getElementById('popup');
   const popupContent = document.getElementById('popup-content');
   const overlay = document.getElementById('overlay');
-  const contadorDiv = document.getElementById("contador");
 
   function closePopup() {
     popup.style.display = 'none';
@@ -320,35 +314,53 @@
   }
   overlay.addEventListener('click', closePopup);
 
-  let vendidas = 0;
-
-  for(let i = 1; i <= totalRifas; i++) {
-    const numStr = i.toString().padStart(4, '0');
-    const div = document.createElement('div');
+  for(let i=1; i <= totalRifas; i++) {
+    let numStr = i.toString().padStart(4, '0');
+    let div = document.createElement('div');
     div.classList.add('rifa');
-
     if(rifasReservadas[numStr]) {
       div.classList.add('reservada');
-      div.title = `Reservada por: ${rifasReservadas[numStr]}`;
-      div.innerHTML = `${numStr}<br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>`;
+      div.title = Reservada por: ${rifasReservadas[numStr]};
+      div.innerHTML = numStr + <br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>;
       div.addEventListener('click', () => {
-        popupContent.textContent = `Rifa ${numStr} reservada por: ${rifasReservadas[numStr]}`;
+        popupContent.textContent = Rifa ${numStr} reservada por: ${rifasReservadas[numStr]};
         popup.style.display = 'block';
         overlay.style.display = 'block';
       });
-      vendidas++;
     } else {
       div.classList.add('disponivel');
       div.title = "Disponível";
       div.textContent = numStr;
     }
-
     container.appendChild(div);
   }
 
-  const disponiveis = totalRifas - vendidas;
-  contadorDiv.innerHTML = `🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis`;
+const rifasContainer = document.getElementById("rifasContainer");
+  const contadorDiv = document.getElementById("contador");
+
+  let vendidas = 0;
+
+  for (let i = 1; i <= 2000; i++) {
+    const numStr = i.toString().padStart(4, "0");
+    const div = document.createElement("div");
+    div.className = "rifa";
+
+    if (rifasReservadas[numStr]) {
+      div.classList.add("reservada");
+      div.innerHTML = ${numStr}<br><small>${rifasReservadas[numStr]}</small>;
+      vendidas++;
+    } else {
+      div.textContent = numStr;
+    }
+
+    rifasContainer.appendChild(div);
+  }
+
+  const disponiveis = 2000 - vendidas;
+  contadorDiv.innerHTML = 🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis;
+
 </script>
+
 
 </body>
 </html>
