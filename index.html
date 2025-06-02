@@ -5,92 +5,165 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Rifas da Formatura</title>
 <style>
-  body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f4f8;
-      margin: 0;
-      padding: 20px;
-    }
+   body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  .maiores-compradores {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 20px 30px;
+    text-align: center;
+  }
+  .maiores-compradores h2 {
+    margin-top: 0;
+    color: #2c3e50;
+  }
+  .maiores-compradores ol {
+    padding-left: 1.2rem;
+    margin: 0;
+    font-size: 1.1rem;
+    color: #555;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+  .maiores-compradores li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
 
-    h1 {
-      text-align: center;
-      color: #333;
-    }
+  .premios {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+  .premio {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    flex: 1 1 280px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .premio:hover {
+    transform: translateY(-6px);
+  }
+  .premio img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+  .premio h2 {
+    font-size: 1.4rem;
+    margin: 0 0 8px;
+    color: #2c3e50;
+  }
+  .premio p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+  }
 
+  .rifas {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 8px;
+  }
+  .rifa {
+    background-color: #d1f0d1;
+    border-radius: 6px;
+    border: 1px solid #8bc34a;
+    height: 50px;
+    line-height: 20px;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .rifa.reservada {
+    background-color: #ffccd0;
+    border-color: #e57373;
+    cursor: pointer;
+  }
+  .rifa:hover {
+    filter: brightness(0.9);
+  }
+
+  .popup, .overlay {
+    display: none;
+  }
+
+  .overlay {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border-radius: 14px;
+    z-index: 1000;
+    max-width: 320px;
+    text-align: center;
+  }
+  .popup h3 {
+    margin-top: 0;
+    font-weight: 700;
+    color: #d32f2f;
+  }
+  .popup button {
+    margin-top: 20px;
+    padding: 10px 18px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .popup button:hover {
+    background-color: #388e3c;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 500px) {
     .premios {
-      text-align: center;
-      margin-bottom: 30px;
+      gap: 30px;
     }
-
-    .premios img {
-      max-width: 120px;
-      margin: 10px;
-      display: inline-block;
+    .premio {
+      flex: 1 1 100%;
     }
-
-    .ranking {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .ranking h2 {
-      margin-bottom: 10px;
-    }
-
-    .ranking ol {
-      padding-left: 0;
-      list-style: none;
-    }
-
-    .ranking li {
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      margin: 5px auto;
-      max-width: 300px;
-    }
-
-    #rifasContainer {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-      gap: 10px;
-    }
-
-    .rifa {
-      background-color: #d1f0d1;
-      border-radius: 6px;
-      border: 1px solid #8bc34a;
-      height: 80px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-weight: 600;
-      cursor: pointer;
-      user-select: none;
-      padding: 4px;
-      overflow: hidden;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    .rifa.reservada {
-      background-color: #ffccd0;
-      border-color: #e57373;
-      cursor: default;
-    }
-
-    .rifa small {
-      font-weight: 400;
-      font-size: 11px;
-      color: #900;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-      display: inline-block;
-    }
+  }
 </style>
 </head>
 <body>
