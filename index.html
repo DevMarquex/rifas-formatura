@@ -71,4 +71,272 @@
     border-radius: 10px;
   }
   .premio h2 {
-    font-size: 1.
+    font-size: 1.4rem;
+    margin: 0 0 8px;
+    color: #2c3e50;
+  }
+  .premio p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+  }
+
+  .rifas {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 8px;
+  }
+  .rifa {
+    background-color: #d1f0d1;
+    border-radius: 6px;
+    border: 1px solid #8bc34a;
+    height: 50px;
+    line-height: 20px;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .rifa.reservada {
+    background-color: #ffccd0;
+    border-color: #e57373;
+    cursor: pointer;
+  }
+  .rifa:hover {
+    filter: brightness(0.9);
+  }
+
+  .popup, .overlay {
+    display: none;
+  }
+
+  .overlay {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border-radius: 14px;
+    z-index: 1000;
+    max-width: 320px;
+    text-align: center;
+  }
+  .popup h3 {
+    margin-top: 0;
+    font-weight: 700;
+    color: #d32f2f;
+  }
+  .popup button {
+    margin-top: 20px;
+    padding: 10px 18px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .popup button:hover {
+    background-color: #388e3c;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 500px) {
+    .premios {
+      gap: 30px;
+    }
+    .premio {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Rifas da Formatura</h1>
+
+<div class="maiores-compradores">
+  <h2>Ranking dos 5 Maiores Compradores</h2>
+  <ol id="ranking-list">
+    <!-- Lista vai ser preenchida por JS -->
+  </ol>
+</div>
+
+<div class="premios">
+  <div class="premio">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/IPhone_15_Pro_Silver.svg" alt="iPhone 15" />
+    <h2>1º Lugar</h2>
+    <p>iPhone 15</p>
+  </div>
+  <div class="premio">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Cacau_Show_chocolate_box.jpg" alt="Cesta de Chocolates Cacau Show" />
+    <h2>2º Lugar</h2>
+    <p>Cesta de Chocolates Cacau Show</p>
+  </div>
+</div>
+
+<p style="text-align:center; font-size: 16px; margin-bottom: 25px;">Clique na rifa vermelha para ver mais detalhes.</p>
+
+<div class="rifas" id="rifas-container"></div>
+
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="popup">
+  <h3>Rifa Reservada</h3>
+  <div id="popup-content"></div>
+  <button onclick="closePopup()">Fechar</button>
+</div>
+
+<script>
+  const rifasReservadas = {
+    "0975": "Lucas",
+    "0830": "Ana",
+    "0793": "Lucas",
+    "0640": "Lucas",
+    "0624": "Mariana",
+    "0619": "Ana",
+    "0575": "Carlos",
+    "0509": "Carlos",
+    "0467": "Carlos",
+    "0419": "Ana",
+    "0412": "Mariana",
+    "0305": "Ana",
+    "0290": "Lucas",
+    "0270": "Mariana",
+    "0268": "Lucas",
+    "0237": "Lucas",
+    "0209": "Mariana",
+    "0193": "Lucas",
+    "0188": "Carlos",
+    "0180": "Carlos",
+    "0175": "Carlos",
+    "0153": "Lucas",
+    "0127": "Lucas",
+    "0107": "Lucas",
+    "0101": "Lucas",
+    "0089": "Ana",
+    "0070": "Lucas",
+    "0037": "Lucas",
+    "0014": "Lucas",
+    "1199": "Ana",
+    "1194": "Lucas",
+    "1117": "Lucas",
+    "1174": "Lucas",
+    "1135": "Mariana",
+    "1127": "Lucas",
+    "1126": "Lucas",
+    "1125": "Lucas",
+    "1124": "Lucas",
+    "1123": "Lucas",
+    "1113": "Ana",
+    "1101": "Lucas",
+    "1245": "Lucas",
+    "1300": "Lucas",
+    "1301": "Lucas",
+    "1302": "Lucas",
+    "1303": "Lucas",
+    "1304": "Lucas",
+    "1305": "Lucas",
+    "1306": "Lucas",
+    "1307": "Lucas",
+    "1308": "Lucas",
+    "1309": "Lucas",
+    "1310": "Lucas",
+    "1311": "Lucas",
+    "1313": "Lucas",
+    "1399": "Ana",
+    "1380": "Lucas",
+    "1377": "Lucas",
+    "1369": "Lucas",
+    "1362": "Lucas",
+    "1359": "Lucas",
+    "1347": "Lucas",
+    "1342": "Lucas",
+    "1337": "Lucas",
+    "1333": "Lucas",
+    "1331": "Lucas",
+    "1317": "Lucas",
+    "1318": "Lucas",
+    "1319": "Lucas",
+    "1320": "Lucas",
+    "1321": "Lucas",
+    "1322": "Lucas",
+    "1323": "Lucas",
+    "1324": "Lucas",
+    "1325": "Lucas",
+    "1999": "Lucas",
+    "1992": "Lucas",
+    "0906": "Lucas",
+    "0603": "Lucas"
+  };
+
+  // Contar quantas rifas cada comprador reservou
+  const contagemCompradores = {};
+  for(const num in rifasReservadas){
+    const comprador = rifasReservadas[num];
+    contagemCompradores[comprador] = (contagemCompradores[comprador] || 0) + 1;
+  }
+
+  // Criar array e ordenar do maior para o menor
+  const ranking = Object.entries(contagemCompradores)
+    .sort((a,b) => b[1] - a[1])
+    .slice(0,5);
+
+  // Preencher lista no HTML
+  const rankingList = document.getElementById('ranking-list');
+  ranking.forEach(([nome, qtd]) => {
+    const li = document.createElement('li');
+    li.textContent = `${nome} — ${qtd} rifas`;
+    rankingList.appendChild(li);
+  });
+
+  const totalRifas = 2000;
+  const container = document.getElementById('rifas-container');
+  const popup = document.getElementById('popup');
+  const popupContent = document.getElementById('popup-content');
+  const overlay = document.getElementById('overlay');
+
+  function closePopup() {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+  }
+  overlay.addEventListener('click', closePopup);
+
+  for(let i=1; i <= totalRifas; i++) {
+    let numStr = i.toString().padStart(4, '0');
+    let div = document.createElement('div');
+    div.classList.add('rifa');
+    if(rifasReservadas[numStr]) {
+      div.classList.add('reservada');
+      div.title = `Reservada por: ${rifasReservadas[numStr]}`;
+      div.innerHTML = numStr + `<br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>`;
+      div.addEventListener('click', () => {
+        popupContent.textContent = `Rifa ${numStr} reservada por: ${rifasReservadas[numStr]}`;
+        popup.style.display = 'block';
+        overlay.style.display = 'block';
+      });
+    } else {
+      div.classList.add('disponivel');
+      div.title = "Disponível";
+      div.textContent = numStr;
+    }
+    container.appendChild(div);
+  }
+</script>
+
+</body>
+</html>
