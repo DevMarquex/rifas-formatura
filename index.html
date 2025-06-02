@@ -5,159 +5,208 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Rifas da Formatura</title>
 <style>
-  /* Grid de rifas */
-  .rifa {
-    width: 50px;
-    height: 40px;
-    margin: 4px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 900;
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  .maiores-compradores {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 20px 30px;
+    text-align: center;
+  }
+  .maiores-compradores h2 {
+    margin-top: 0;
+    color: #2c3e50;
+  }
+  .maiores-compradores ol {
+    padding-left: 1.2rem;
+    margin: 0;
+    font-size: 1.1rem;
+    color: #555;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+  .maiores-compradores li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .premios {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
     display: flex;
     justify-content: center;
-    align-items: center;
-    user-select: none;
-  }
-  .disponivel {
-    background: #87ceeb;
-    color: #0d0d0d;
-  }
-  .selecionada {
-    background: #7ac1b9;
-    color: white;
-    border: 2px solid #0d0d0d;
-  }
-  .reservada {
-    background: #fddede;
-    color: #900000;
-    cursor: default;
-  }
-
-  #rifas-container {
-    max-width: 720px;
-    margin: 20px auto;
-    display: flex;
+    gap: 60px;
     flex-wrap: wrap;
-    gap: 4px;
   }
-
-  /* Botão flutuante comprar */
-  #comprar-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #4caf50;
-    color: white;
-    padding: 14px 24px;
-    border-radius: 50px;
-    font-weight: 700;
+  .premio {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    flex: 1 1 280px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .premio:hover {
+    transform: translateY(-6px);
+  }
+  .premio img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+  .premio h2 {
+    font-size: 1.4rem;
+    margin: 0 0 8px;
+    color: #2c3e50;
+  }
+  .premio p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+  }
+  .rifas {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 8px;
+  }
+  .rifa {
+    background-color: #d1f0d1;
+    border-radius: 6px;
+    border: 1px solid #8bc34a;
+    height: 70px;
+    line-height: 20px;
+    text-align: center;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    display: none;
-    z-index: 1100;
+    user-select: none;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
-
-  /* Popup QR PIX fixo */
-  #qr-popup {
+  .rifa.reservada {
+    background-color: #ffccd0;
+    border-color: #e57373;
+    cursor: pointer;
+  }
+  .rifa.selecionada {
+    background-color: #fff59d;
+    border-color: #fbc02d;
+  }
+  .rifa:hover {
+    filter: brightness(0.9);
+  }
+  .popup, .overlay {
+    display: none;
+  }
+  .overlay {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .popup {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
     padding: 25px 30px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     border-radius: 14px;
-    z-index: 1200;
+    z-index: 1000;
     max-width: 320px;
     text-align: center;
-    display: none;
   }
-  #qr-popup img {
-    width: 230px;
-    margin: 15px 0;
-  }
-  #qr-popup button {
-    background: #d32f2f;
-    border: none;
-    color: white;
+  .popup h3 {
+    margin-top: 0;
     font-weight: 700;
-    font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 12px;
-    cursor: pointer;
+    color: #d32f2f;
   }
-
-  #overlay {
-    display: none;
+  .popup button {
+    margin-top: 20px;
+    padding: 10px 18px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .popup button:hover {
+    background-color: #388e3c;
+  }
+  #botao-compra-flutuante {
     position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.5);
-    z-index: 1199;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2000;
   }
-
-  /* Painel admin simples para atualizar rifas reservadas */
-  #admin-panel {
-    max-width: 720px;
-    margin: 40px auto;
-    padding: 20px;
-    border: 2px solid #999;
-    border-radius: 12px;
-  }
-  #admin-panel textarea {
-    width: 100%;
-    height: 80px;
-    font-family: monospace;
-    font-size: 16px;
-  }
-  #admin-panel button {
-    margin-top: 10px;
-    background-color: #0052cc;
-    border: none;
+  #botao-compra-flutuante button {
+    background-color: #25d366;
     color: white;
-    font-weight: 700;
+    border: none;
+    padding: 14px 20px;
     font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 12px;
+    font-weight: bold;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     cursor: pointer;
+    transition: background 0.3s;
+  }
+  #botao-compra-flutuante button:hover {
+    background-color: #20b954;
   }
 </style>
 </head>
 <body>
-
-<h1 style="text-align:center;">Rifas da Formatura</h1>
-
-<div id="rifas-container"></div>
-
-<button id="comprar-btn">Comprar Rifas Selecionadas</button>
-
-<div id="overlay"></div>
-
-<div id="qr-popup">
-  <h3>Pagamento via PIX</h3>
-  
-  <img id="qr-code-img" alt="QR Code PIX" />
-  <p><b>Chave PIX:</b> <span id="pix-key"></span></p>
-  <button onclick="fecharQrPopup()">Fechar</button>
+<div class="maiores-compradores">
+  <h2>Ranking dos 5 Maiores Compradores</h2>
+  <ol id="ranking-list"></ol>
 </div>
-
-<!-- Painel admin para atualizar rifas reservadas -->
-<div id="admin-panel">
-  <h2>Painel Administrativo - Atualizar Rifas Vendidas</h2>
-  <p>Informe os números das rifas vendidas, separados por vírgula.</p>
-  <textarea id="rifas-vendidas-input" placeholder="Ex: 0001,0002,0045"></textarea>
-  <button onclick="atualizarRifasReservadas()">Atualizar Rifas</button>
-  <p><small>Este painel deve ser usado apenas por quem gerencia as rifas.</small></p>
+<div class="premios">
+  <div class="premio">
+    <img src="https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_hero.png" alt="iPhone 15" />
+    <h2>1º Lugar</h2>
+    <p>iPhone 15 128GB</p>
+  </div>
+  <div class="premio">
+    <img src="https://m.media-amazon.com/images/I/41ZieyJmyvL._AC_SX679_.jpg" alt="Cesta de Chocolates Cacau Show" />
+    <h2>2º Lugar</h2>
+    <p>Cesta de Chocolates Cacau Show</p>
+  </div>
 </div>
-
+<h1>Rifas Formatura</h1>
+<div id="contador" style="text-align: center; margin-bottom: 20px; font-size: 18px;"></div>
+<div class="rifas" id="rifas-container"></div>
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="popup">
+  <h3>Rifa Reservada</h3>
+  <div id="popup-content"></div>
+  <button onclick="closePopup()">Fechar</button>
+</div>
+<div id="botao-compra-flutuante">
+  <button id="enviar-whatsapp">Comprar (0)</button>
+</div>
 <script>
-  const valorRifa = 10.00; // Valor por rifa
-  const totalRifas = 2000;
-
-  // Chave PIX da sua namorada (a que vai aparecer no QR Code)
-  // Pode ser o payload gerado por algum gerador de QR Code PIX, ou a chave simples (CPF, e-mail, celular)
-  // Vou usar uma chave exemplo abaixo, você troca pela real
-  const pixKey = "86385399087"; // troque aqui!
-
   const rifasReservadas = {
     "0975": "Mara Marques",
     "0830": "Mara Marques",
@@ -247,119 +296,83 @@
     "0503": "Murilo Bellon",
     "0504": "Murilo Bellon",
     "0009": "Rita Martins",
-  }; // objeto que guarda rifas vendidas e quem comprou (pode ficar vazio)
-
-  // elementos
-  const container = document.getElementById('rifas-container');
-  const comprarBtn = document.getElementById('comprar-btn');
-  const overlay = document.getElementById('overlay');
-  const qrPopup = document.getElementById('qr-popup');
-  const qrCodeImg = document.getElementById('qr-code-img');
-  const pixKeySpan = document.getElementById('pix-key');
-  const rifasVendidasInput = document.getElementById('rifas-vendidas-input');
-
-  let selecionadas = new Set();
-
-  function atualizarComprarBtn() {
-    if (selecionadas.size > 0) {
-      comprarBtn.style.display = 'block';
-      comprarBtn.textContent = `Comprar ${selecionadas.size} rifa(s) por R$ ${(selecionadas.size * valorRifa).toFixed(2)}`;
-    } else {
-      comprarBtn.style.display = 'none';
-    }
+  };
+  const contagemCompradores = {};
+  for(const num in rifasReservadas){
+    const comprador = rifasReservadas[num];
+    contagemCompradores[comprador] = (contagemCompradores[comprador] || 0) + 1;
   }
-
-  function toggleRifaSelecionada(div, numStr) {
-    if (rifasReservadas[numStr]) return; // não pode selecionar rifas vendidas
-
-    if (selecionadas.has(numStr)) {
-      selecionadas.delete(numStr);
-      div.classList.remove('selecionada');
-    } else {
-      selecionadas.add(numStr);
-      div.classList.add('selecionada');
-    }
-    atualizarComprarBtn();
-  }
-
-  function criarRifasGrid() {
-    container.innerHTML = '';
-    for(let i=1; i<=totalRifas; i++) {
-      const numStr = i.toString().padStart(4, '0');
-      const div = document.createElement('div');
-      div.classList.add('rifa');
-      if(rifasReservadas[numStr]) {
-        div.classList.add('reservada');
-        div.textContent = numStr;
-        div.title = `Vendida`;
-      } else {
-        div.classList.add('disponivel');
-        div.textContent = numStr;
-        div.title = "Disponível";
-        div.addEventListener('click', () => toggleRifaSelecionada(div, numStr));
-      }
-      container.appendChild(div);
-    }
-  }
-
-  // Gera QR Code simples (estático) para a chave PIX usando API gratuita (exemplo: https://goqr.me/api/)
-  function gerarQrCode() {
-    // PIX payload simples para pagar valor (não obrigatório valor fixo)
-    // Pode gerar QR Code só da chave PIX (o pagador informa valor)
-    // Ou gerar payload mais complexo via geradores específicos (não implementado aqui)
-    const pixPayload = `00020126360014BR.GOV.BCB.PIX0136${pixKey}0208Compra rifas520400005303986540${(valorRifa * selecionadas.size).toFixed(2).replace('.', '')}5802BR5925Rifas Formatura 6009Sao Paulo61080540900062070503***6304`;
-
-    // Pra simplificar, só QR da chave PIX (você pode usar uma imagem QR pronta, ou serviço externo)
-    // Usaremos API pública de QR code, só para a chave PIX
-
-    // Se quiser usar payload real, terá que usar gerador específico ou sua namorada gera QR e salva imagem
-
-    // Aqui só geramos QR da chave PIX simples
-    const url = `https://api.qrserver.com/v1/create-qr-code/?size=230x230&data=PIX:${pixKey}`;
-    return url;
-  }
-
-  comprarBtn.addEventListener('click', () => {
-    if (selecionadas.size === 0) return;
-
-    // Mostrar popup QR Code fixo da chave PIX
-    const qrUrl = gerarQrCode();
-    qrCodeImg.src = qrUrl;
-    pixKeySpan.textContent = pixKey;
-
-    overlay.style.display = 'block';
-    qrPopup.style.display = 'block';
+  const ranking = Object.entries(contagemCompradores).sort((a,b) => b[1] - a[1]).slice(0,5);
+  const rankingList = document.getElementById('ranking-list');
+  ranking.forEach(([nome, qtd]) => {
+    const li = document.createElement('li');
+    li.textContent = `${nome} — ${qtd} rifas`;
+    rankingList.appendChild(li);
   });
+  const totalRifas = 2000;
+  const container = document.getElementById('rifas-container');
+  const popup = document.getElementById('popup');
+  const popupContent = document.getElementById('popup-content');
+  const overlay = document.getElementById('overlay');
+  const contadorDiv = document.getElementById("contador");
+  let vendidas = 0;
+  let rifasSelecionadas = [];
+  for(let i = 1; i <= totalRifas; i++) {
+    let numStr = i.toString().padStart(4, '0');
+    let div = document.createElement('div');
+    div.classList.add('rifa');
+    if(rifasReservadas[numStr]) {
+      vendidas++;
+      div.classList.add('reservada');
+      div.title = `Reservada por: ${rifasReservadas[numStr]}`;
+      div.innerHTML = `${numStr}<br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>`;
+      div.addEventListener('click', () => {
+        popupContent.textContent = `Rifa ${numStr} reservada por: ${rifasReservadas[numStr]}`;
+        popup.style.display = 'block';
+        overlay.style.display = 'block';
+      });
+    } else {
+      div.classList.add('disponivel');
+      div.title = "Disponível";
+      div.textContent = numStr;
+      div.addEventListener('click', () => {
+        if (div.classList.contains('selecionada')) {
+          div.classList.remove('selecionada');
+          rifasSelecionadas = rifasSelecionadas.filter(n => n !== numStr);
+        } else {
+          div.classList.add('selecionada');
+          rifasSelecionadas.push(numStr);
+        }
+        atualizarBotaoCompra();
+      });
+    }
+    container.appendChild(div);
+  }
+  const disponiveis = totalRifas - vendidas;
+  contadorDiv.innerHTML = `🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis`;
 
-  function fecharQrPopup() {
+  function closePopup() {
+    popup.style.display = 'none';
     overlay.style.display = 'none';
-    qrPopup.style.display = 'none';
+  }
+  overlay.addEventListener('click', closePopup);
+
+  function atualizarBotaoCompra() {
+    const botao = document.getElementById('enviar-whatsapp');
+    botao.textContent = `Comprar (${rifasSelecionadas.length})`;
   }
 
-  overlay.addEventListener('click', fecharQrPopup);
-
-  // Atualiza rifas reservadas manualmente
-  function atualizarRifasReservadas() {
-    const texto = rifasVendidasInput.value.trim();
-    if (!texto) {
-      alert("Informe pelo menos um número de rifa vendido.");
+  document.getElementById('enviar-whatsapp').addEventListener('click', () => {
+    if (rifasSelecionadas.length === 0) {
+      alert('Por favor, selecione pelo menos uma rifa.');
       return;
     }
-
-    const nums = texto.split(',').map(n => n.trim().padStart(4, '0'));
-    nums.forEach(n => {
-      rifasReservadas[n] = true;
-      selecionadas.delete(n);
-    });
-
-    criarRifasGrid();
-    atualizarComprarBtn();
-    rifasVendidasInput.value = "";
-    alert("Rifas atualizadas com sucesso!");
-  }
-
-  // Inicializar grid
-  criarRifasGrid();
+    const numeros = rifasSelecionadas.join(', ');
+    const texto = `Olá! Gostaria de reservar as seguintes rifas da formatura:\n\nNúmeros: ${numeros}\n\nValor total: R$${(rifasSelecionadas.length * 10).toFixed(2).replace('.', ',')}\n\nVocê pode me passar a chave PIX?`;
+    const numeroWhatsApp = '5551981370547';
+    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texto)}`;
+    window.open(url, '_blank');
+  });
 </script>
 </body>
 </html>
