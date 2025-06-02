@@ -155,7 +155,6 @@
     background-color: #388e3c;
   }
 
-  /* Responsive tweaks */
   @media (max-width: 500px) {
     .premios {
       gap: 30px;
@@ -170,9 +169,7 @@
 
 <div class="maiores-compradores">
   <h2>Ranking dos 5 Maiores Compradores</h2>
-  <ol id="ranking-list">
-    <!-- Lista vai ser preenchida por JS -->
-  </ol>
+  <ol id="ranking-list"></ol>
 </div>
 
 <div class="premios">
@@ -189,7 +186,7 @@
 </div>
 
 <h1>Rifas Formatura</h1>
-
+<div id="contador" style="text-align: center; margin-bottom: 20px; font-size: 18px;"></div>
 <div class="rifas" id="rifas-container"></div>
 
 <div class="overlay" id="overlay"></div>
@@ -282,23 +279,20 @@
     "0603": "Lucas"
   };
 
-  // Contar quantas rifas cada comprador reservou
   const contagemCompradores = {};
   for(const num in rifasReservadas){
     const comprador = rifasReservadas[num];
     contagemCompradores[comprador] = (contagemCompradores[comprador] || 0) + 1;
   }
 
-  // Criar array e ordenar do maior para o menor
   const ranking = Object.entries(contagemCompradores)
     .sort((a,b) => b[1] - a[1])
     .slice(0,5);
 
-  // Preencher lista no HTML
   const rankingList = document.getElementById('ranking-list');
   ranking.forEach(([nome, qtd]) => {
     const li = document.createElement('li');
-    li.textContent = ${nome} — ${qtd} rifas;
+    li.textContent = `${nome} — ${qtd} rifas`;
     rankingList.appendChild(li);
   });
 
@@ -307,23 +301,29 @@
   const popup = document.getElementById('popup');
   const popupContent = document.getElementById('popup-content');
   const overlay = document.getElementById('overlay');
+  const contadorDiv = document.getElementById("contador");
 
   function closePopup() {
     popup.style.display = 'none';
     overlay.style.display = 'none';
   }
+
   overlay.addEventListener('click', closePopup);
 
-  for(let i=1; i <= totalRifas; i++) {
+  let vendidas = 0;
+
+  for(let i = 1; i <= totalRifas; i++) {
     let numStr = i.toString().padStart(4, '0');
     let div = document.createElement('div');
     div.classList.add('rifa');
+
     if(rifasReservadas[numStr]) {
+      vendidas++;
       div.classList.add('reservada');
-      div.title = Reservada por: ${rifasReservadas[numStr]};
-      div.innerHTML = numStr + <br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>;
+      div.title = `Reservada por: ${rifasReservadas[numStr]}`;
+      div.innerHTML = `${numStr}<br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>`;
       div.addEventListener('click', () => {
-        popupContent.textContent = Rifa ${numStr} reservada por: ${rifasReservadas[numStr]};
+        popupContent.textContent = `Rifa ${numStr} reservada por: ${rifasReservadas[numStr]}`;
         popup.style.display = 'block';
         overlay.style.display = 'block';
       });
@@ -335,32 +335,10 @@
     container.appendChild(div);
   }
 
-const rifasContainer = document.getElementById("rifasContainer");
-  const contadorDiv = document.getElementById("contador");
-
-  let vendidas = 0;
-
-  for (let i = 1; i <= 2000; i++) {
-    const numStr = i.toString().padStart(4, "0");
-    const div = document.createElement("div");
-    div.className = "rifa";
-
-    if (rifasReservadas[numStr]) {
-      div.classList.add("reservada");
-      div.innerHTML = ${numStr}<br><small>${rifasReservadas[numStr]}</small>;
-      vendidas++;
-    } else {
-      div.textContent = numStr;
-    }
-
-    rifasContainer.appendChild(div);
-  }
-
-  const disponiveis = 2000 - vendidas;
-  contadorDiv.innerHTML = 🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis;
+  const disponiveis = totalRifas - vendidas;
+  contadorDiv.innerHTML = `🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis`;
 
 </script>
-
 
 </body>
 </html>
