@@ -6,42 +6,90 @@
 <title>Rifas da Formatura</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
     padding: 20px;
-    background: #f8f8f8;
+    color: #333;
   }
   h1 {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
-  p {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 16px;
-  }
-  .rifas {
+  .premios {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
     justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+  .premio {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    flex: 1 1 280px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .premio:hover {
+    transform: translateY(-6px);
+  }
+  .premio img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+  .premio h2 {
+    font-size: 1.4rem;
+    margin: 0 0 8px;
+    color: #2c3e50;
+  }
+  .premio p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+  }
+
+  .rifas {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 8px;
   }
   .rifa {
-    width: 50px;
-    height: 30px;
-    line-height: 30px;
+    background-color: #d1f0d1;
+    border-radius: 6px;
+    border: 1px solid #8bc34a;
+    height: 38px;
+    line-height: 38px;
     text-align: center;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+    font-weight: 600;
     cursor: pointer;
     user-select: none;
-    background-color: #e0ffe0;
     transition: background-color 0.3s;
   }
   .rifa.reservada {
-    background-color: #ffcccc;
+    background-color: #ffccd0;
+    border-color: #e57373;
+    cursor: pointer;
   }
   .rifa:hover {
     filter: brightness(0.9);
+  }
+
+  .popup, .overlay {
+    display: none;
+  }
+
+  .overlay {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
   }
   .popup {
     position: fixed;
@@ -49,43 +97,73 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    border: 2px solid #333;
-    padding: 20px;
-    z-index: 10;
-    display: none;
-    max-width: 90%;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    border-radius: 8px;
+    padding: 25px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border-radius: 14px;
+    z-index: 1000;
+    max-width: 320px;
+    text-align: center;
+  }
+  .popup h3 {
+    margin-top: 0;
+    font-weight: 700;
+    color: #d32f2f;
   }
   .popup button {
-    margin-top: 15px;
-    padding: 8px 16px;
+    margin-top: 20px;
+    padding: 10px 18px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
   }
-  .overlay {
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    z-index: 5;
+  .popup button:hover {
+    background-color: #388e3c;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 500px) {
+    .premios {
+      gap: 30px;
+    }
+    .premio {
+      flex: 1 1 100%;
+    }
   }
 </style>
 </head>
 <body>
 
 <h1>Rifas da Formatura</h1>
-<p>Clique na rifa vermelha para ver quem reservou.</p>
+
+<div class="premios">
+  <div class="premio">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/IPhone_15_Pro_Silver.svg" alt="iPhone 15" />
+    <h2>1º Lugar</h2>
+    <p>iPhone 15</p>
+  </div>
+  <div class="premio">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Cacau_Show_chocolate_box.jpg" alt="Cesta de Chocolates Cacau Show" />
+    <h2>2º Lugar</h2>
+    <p>Cesta de Chocolates Cacau Show</p>
+  </div>
+</div>
+
+<p style="text-align:center; font-size: 16px; margin-bottom: 25px;">Clique na rifa vermelha para ver quem reservou.</p>
 
 <div class="rifas" id="rifas-container"></div>
 
 <div class="overlay" id="overlay"></div>
 <div class="popup" id="popup">
+  <h3>Rifa Reservada</h3>
   <div id="popup-content"></div>
   <button onclick="closePopup()">Fechar</button>
 </div>
 
 <script>
-  // Rifas reservadas que você enviou (com nome genérico "Reservada")
   const rifasReservadas = {
     "0975": "Reservada",
     "0830": "Reservada",
@@ -178,7 +256,6 @@
     popup.style.display = 'none';
     overlay.style.display = 'none';
   }
-
   overlay.addEventListener('click', closePopup);
 
   for(let i=1; i <= totalRifas; i++) {
