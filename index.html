@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rifas da Formatura</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f8f8f8;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  p {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  .rifas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+  }
+  .rifa {
+    width: 50px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    user-select: none;
+    background-color: #e0ffe0;
+    transition: background-color 0.3s;
+  }
+  .rifa.reservada {
+    background-color: #ffcccc;
+  }
+  .rifa:hover {
+    filter: brightness(0.9);
+  }
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 2px solid #333;
+    padding: 20px;
+    z-index: 10;
+    display: none;
+    max-width: 90%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    border-radius: 8px;
+  }
+  .popup button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  .overlay {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<h1>Rifas da Formatura</h1>
+<p>Clique na rifa vermelha para ver quem reservou.</p>
+
+<div class="rifas" id="rifas-container"></div>
+
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="popup">
+  <div id="popup-content"></div>
+  <button onclick="closePopup()">Fechar</button>
+</div>
+
+<script>
+  // Rifas reservadas que você enviou (com nome genérico "Reservada")
+  const rifasReservadas = {
+    "0975": "Reservada",
+    "0830": "Reservada",
+    "0793": "Reservada",
+    "0640": "Reservada",
+    "0624": "Reservada",
+    "0619": "Reservada",
+    "0575": "Reservada",
+    "0509": "Reservada",
+    "0467": "Reservada",
+    "0419": "Reservada",
+    "0412": "Reservada",
+    "0305": "Reservada",
+    "0290": "Reservada",
+    "0270": "Reservada",
+    "0268": "Reservada",
+    "0237": "Reservada",
+    "0209": "Reservada",
+    "0193": "Reservada",
+    "0188": "Reservada",
+    "0180": "Reservada",
+    "0175": "Reservada",
+    "0153": "Reservada",
+    "0127": "Reservada",
+    "0107": "Reservada",
+    "0101": "Reservada",
+    "0089": "Reservada",
+    "0070": "Reservada",
+    "0037": "Reservada",
+    "0014": "Reservada",
+    "1199": "Reservada",
+    "1194": "Reservada",
+    "1117": "Reservada",
+    "1174": "Reservada",
+    "1135": "Reservada",
+    "1127": "Reservada",
+    "1126": "Reservada",
+    "1125": "Reservada",
+    "1124": "Reservada",
+    "1123": "Reservada",
+    "1113": "Reservada",
+    "1101": "Reservada",
+    "1245": "Reservada",
+    "1300": "Reservada",
+    "1301": "Reservada",
+    "1302": "Reservada",
+    "1303": "Reservada",
+    "1304": "Reservada",
+    "1305": "Reservada",
+    "1306": "Reservada",
+    "1307": "Reservada",
+    "1308": "Reservada",
+    "1309": "Reservada",
+    "1310": "Reservada",
+    "1311": "Reservada",
+    "1313": "Reservada",
+    "1399": "Reservada",
+    "1380": "Reservada",
+    "1377": "Reservada",
+    "1369": "Reservada",
+    "1362": "Reservada",
+    "1359": "Reservada",
+    "1347": "Reservada",
+    "1342": "Reservada",
+    "1337": "Reservada",
+    "1333": "Reservada",
+    "1331": "Reservada",
+    "1317": "Reservada",
+    "1318": "Reservada",
+    "1319": "Reservada",
+    "1320": "Reservada",
+    "1321": "Reservada",
+    "1322": "Reservada",
+    "1323": "Reservada",
+    "1324": "Reservada",
+    "1325": "Reservada",
+    "1999": "Reservada",
+    "1992": "Reservada",
+    "0906": "Reservada",
+    "0603": "Reservada"
+  };
+
+  const totalRifas = 2000;
+  const container = document.getElementById('rifas-container');
+  const popup = document.getElementById('popup');
+  const popupContent = document.getElementById('popup-content');
+  const overlay = document.getElementById('overlay');
+
+  function closePopup() {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+  }
+
+  overlay.addEventListener('click', closePopup);
+
+  for(let i=1; i <= totalRifas; i++) {
+    let numStr = i.toString().padStart(4, '0');
+    let div = document.createElement('div');
+    div.classList.add('rifa');
+    if(rifasReservadas[numStr]) {
+      div.classList.add('reservada');
+      div.title = "Reservada";
+      div.addEventListener('click', () => {
+        popupContent.textContent = `Rifa ${numStr} reservada por: ${rifasReservadas[numStr]}`;
+        popup.style.display = 'block';
+        overlay.style.display = 'block';
+      });
+    } else {
+      div.classList.add('disponivel');
+      div.title = "Disponível";
+    }
+    div.textContent = numStr;
+    container.appendChild(div);
+  }
+</script>
+
+</body>
+</html>
