@@ -43,7 +43,6 @@
     margin-bottom: 8px;
     line-height: 1.4;
   }
-
   .premios {
     max-width: 900px;
     margin: 0 auto 30px auto;
@@ -80,7 +79,6 @@
     color: #555;
     margin: 0;
   }
-
   .rifas {
     max-width: 900px;
     margin: 0 auto;
@@ -109,45 +107,81 @@
     cursor: pointer;
   }
   .rifa.selecionada {
-    background-color: #fff176;
-    border-color: #fdd835;
+    background-color: #fff59d;
+    border-color: #fbc02d;
   }
   .rifa:hover {
     filter: brightness(0.9);
   }
-
-  .btn-reservar {
-    display: block;
-    margin: 20px auto;
-    padding: 12px 25px;
+  .popup, .overlay {
+    display: none;
+  }
+  .overlay {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border-radius: 14px;
+    z-index: 1000;
+    max-width: 320px;
+    text-align: center;
+  }
+  .popup h3 {
+    margin-top: 0;
+    font-weight: 700;
+    color: #d32f2f;
+  }
+  .popup button {
+    margin-top: 20px;
+    padding: 10px 18px;
     background-color: #4caf50;
     color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
   }
-  .btn-reservar:hover {
+  .popup button:hover {
     background-color: #388e3c;
   }
-
-  @media (max-width: 500px) {
-    .premios {
-      gap: 30px;
-    }
-    .premio {
-      flex: 1 1 100%;
-    }
+  #botao-compra-flutuante {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2000;
+  }
+  #botao-compra-flutuante button {
+    background-color: #25d366;
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  #botao-compra-flutuante button:hover {
+    background-color: #20b954;
   }
 </style>
 </head>
 <body>
-
 <div class="maiores-compradores">
   <h2>Ranking dos 5 Maiores Compradores</h2>
   <ol id="ranking-list"></ol>
 </div>
-
 <div class="premios">
   <div class="premio">
     <img src="https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_hero.png" alt="iPhone 15" />
@@ -160,12 +194,18 @@
     <p>Cesta de Chocolates Cacau Show</p>
   </div>
 </div>
-
 <h1>Rifas Formatura</h1>
 <div id="contador" style="text-align: center; margin-bottom: 20px; font-size: 18px;"></div>
 <div class="rifas" id="rifas-container"></div>
-<button class="btn-reservar" onclick="enviarWhatsapp()">Reservar rifas selecionadas</button>
-
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="popup">
+  <h3>Rifa Reservada</h3>
+  <div id="popup-content"></div>
+  <button onclick="closePopup()">Fechar</button>
+</div>
+<div id="botao-compra-flutuante">
+  <button id="enviar-whatsapp">Comprar (0)</button>
+</div>
 <script>
   const rifasReservadas = {
     "0975": "Mara Marques",
@@ -252,58 +292,88 @@
     "0007": "Henrique Santos",
     "0777": "Henrique Santos", 
     "0500": "Murilo Bellon",
+    "0501": "Murilo Bellon",
     "0502": "Murilo Bellon",
     "0503": "Murilo Bellon",
     "0504": "Murilo Bellon",
     "0009": "Rita Martins",
   };
-
+  const contagemCompradores = {};
+  for(const num in rifasReservadas){
+    const comprador = rifasReservadas[num];
+    contagemCompradores[comprador] = (contagemCompradores[comprador] || 0) + 1;
+  }
+  const ranking = Object.entries(contagemCompradores).sort((a,b) => b[1] - a[1]).slice(0,5);
+  const rankingList = document.getElementById('ranking-list');
+  ranking.forEach(([nome, qtd]) => {
+    const li = document.createElement('li');
+    li.textContent = `${nome} — ${qtd} rifas`;
+    rankingList.appendChild(li);
+  });
   const totalRifas = 2000;
   const container = document.getElementById('rifas-container');
+  const popup = document.getElementById('popup');
+  const popupContent = document.getElementById('popup-content');
+  const overlay = document.getElementById('overlay');
   const contadorDiv = document.getElementById("contador");
   let vendidas = 0;
-  let selecionadas = [];
-
+  let rifasSelecionadas = [];
   for(let i = 1; i <= totalRifas; i++) {
     let numStr = i.toString().padStart(4, '0');
     let div = document.createElement('div');
     div.classList.add('rifa');
-
     if(rifasReservadas[numStr]) {
       vendidas++;
       div.classList.add('reservada');
-      div.textContent = `${numStr}\n${rifasReservadas[numStr]}`;
+      div.title = `Reservada por: ${rifasReservadas[numStr]}`;
+      div.innerHTML = `${numStr}<br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>`;
+      div.addEventListener('click', () => {
+        popupContent.textContent = `Rifa ${numStr} reservada por: ${rifasReservadas[numStr]}`;
+        popup.style.display = 'block';
+        overlay.style.display = 'block';
+      });
     } else {
       div.classList.add('disponivel');
+      div.title = "Disponível";
       div.textContent = numStr;
-      div.onclick = () => {
+      div.addEventListener('click', () => {
         if (div.classList.contains('selecionada')) {
           div.classList.remove('selecionada');
-          selecionadas = selecionadas.filter(r => r !== numStr);
+          rifasSelecionadas = rifasSelecionadas.filter(n => n !== numStr);
         } else {
           div.classList.add('selecionada');
-          selecionadas.push(numStr);
+          rifasSelecionadas.push(numStr);
         }
-      };
+        atualizarBotaoCompra();
+      });
     }
     container.appendChild(div);
   }
-
   const disponiveis = totalRifas - vendidas;
   contadorDiv.innerHTML = `🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis`;
 
-  function enviarWhatsapp() {
-    if (selecionadas.length === 0) {
-      alert("Selecione pelo menos uma rifa.");
+  function closePopup() {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+  }
+  overlay.addEventListener('click', closePopup);
+
+  function atualizarBotaoCompra() {
+    const botao = document.getElementById('enviar-whatsapp');
+    botao.textContent = `Comprar (${rifasSelecionadas.length})`;
+  }
+
+  document.getElementById('enviar-whatsapp').addEventListener('click', () => {
+    if (rifasSelecionadas.length === 0) {
+      alert('Por favor, selecione pelo menos uma rifa.');
       return;
     }
-    const numero = '5551981370547';
-    const valorTotal = selecionadas.length * 10;
-    const mensagem = `Olá! Gostaria de reservar as seguintes rifas: ${selecionadas.join(', ')}. Valor total: R$${valorTotal},00.`;
-    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+    const numeros = rifasSelecionadas.join(', ');
+    const texto = `Olá! Gostaria de reservar as seguintes rifas da formatura:\n\nNúmeros: ${numeros}\n\nValor total: R$${(rifasSelecionadas.length * 10).toFixed(2).replace('.', ',')}\n\nVocê pode me passar a chave PIX?`;
+    const numeroWhatsApp = '5551981370547';
+    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texto)}`;
     window.open(url, '_blank');
-  }
+  });
 </script>
-
 </body>
 </html>
