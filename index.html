@@ -335,7 +335,7 @@
     const comprador = rifasReservadas[num];
     contagemCompradores[comprador] = (contagemCompradores[comprador] || 0) + 1;
   }
-  const ranking = Object.entries(contagemCompradores).sort((a,b) => b[1] - a[1]).slice(0,5);
+  const ranking = Object.entries(contagemCompradores).sort((a,b) => b[1] - a[1]).slice(0,10);
   const rankingList = document.getElementById('ranking-list');
   ranking.forEach(([nome, qtd]) => {
     const li = document.createElement('li');
