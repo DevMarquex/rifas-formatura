@@ -178,6 +178,7 @@
 </style>
 </head>
 <body>
+<canvas id="canvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
 <div class="maiores-compradores">
   <h2>Ranking dos 10 Maiores Compradores</h2>
   <ol id="ranking-list"></ol>
@@ -201,12 +202,51 @@
 <div class="popup" id="popup">
   <h3>Rifa Reservada</h3>
   <div id="popup-content"></div>
-  <button onclick="closePopup()">Fechar</button>
+  <button id="close-popup">Fechar</button>
 </div>
 <div id="botao-compra-flutuante">
   <button id="enviar-whatsapp">Comprar (0)</button>
 </div>
 <script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const mouse = {
+    x: undefined,
+    y: undefined
+  };
+
+  const trail = [];
+  const trailLength = 20;
+  const colors = ['#2c3e50', '#e74c3c', '#ecf0f1', '#3498db', '#2980b9'];
+
+  window.addEventListener('mousemove', (event) => {
+    mouse.x = event.x;
+    mouse.y = event.y;
+    trail.push({ x: mouse.x, y: mouse.y, color: colors[Math.floor(Math.random() * colors.length)] });
+    if (trail.length > trailLength) {
+      trail.shift();
+    }
+  });
+
+  function drawTrail() {
+    for (let i = 0; i < trail.length; i++) {
+      ctx.beginPath();
+      ctx.arc(trail[i].x, trail[i].y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = trail[i].color;
+      ctx.fill();
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawTrail();
+    requestAnimationFrame(animate);
+  }
+  animate();
+
   const rifasReservadas = {
   "0507": "Adelar Israel",
   "1003": "Adelar Israel",
@@ -818,20 +858,24 @@
     li.textContent = `${nome} — ${qtd} rifas`;
     rankingList.appendChild(li);
   });
+
   const totalRifas = 2000;
   const container = document.getElementById('rifas-container');
   const popup = document.getElementById('popup');
   const popupContent = document.getElementById('popup-content');
   const overlay = document.getElementById('overlay');
   const contadorDiv = document.getElementById("contador");
-  let vendidas = 0;
   let rifasSelecionadas = [];
+
+  const vendidas = Object.keys(rifasReservadas).length;
+  const disponiveis = totalRifas - vendidas;
+  contadorDiv.innerHTML = `🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis`;
+
   for(let i = 1; i <= totalRifas; i++) {
-    let numStr = i.toString().padStart(4, '0');
-    let div = document.createElement('div');
+    const numStr = i.toString().padStart(4, '0');
+    const div = document.createElement('div');
     div.classList.add('rifa');
     if(rifasReservadas[numStr]) {
-      vendidas++;
       div.classList.add('reservada');
       div.title = `Reservada por: ${rifasReservadas[numStr]}`;
       div.innerHTML = `${numStr}<br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>`;
@@ -845,11 +889,10 @@
       div.title = "Disponível";
       div.textContent = numStr;
       div.addEventListener('click', () => {
-        if (div.classList.contains('selecionada')) {
-          div.classList.remove('selecionada');
+        div.classList.toggle('selecionada');
+        if (rifasSelecionadas.includes(numStr)) {
           rifasSelecionadas = rifasSelecionadas.filter(n => n !== numStr);
         } else {
-          div.classList.add('selecionada');
           rifasSelecionadas.push(numStr);
         }
         atualizarBotaoCompra();
@@ -857,14 +900,13 @@
     }
     container.appendChild(div);
   }
-  const disponiveis = totalRifas - vendidas;
-  contadorDiv.innerHTML = `🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis`;
 
   function closePopup() {
     popup.style.display = 'none';
     overlay.style.display = 'none';
   }
   overlay.addEventListener('click', closePopup);
+  document.getElementById('close-popup').addEventListener('click', closePopup);
 
   function atualizarBotaoCompra() {
     const botao = document.getElementById('enviar-whatsapp');
@@ -885,4 +927,3 @@
 </script>
 </body>
 </html>
-
