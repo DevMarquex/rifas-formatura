@@ -4,45 +4,135 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Rifas da Formatura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
+  /* Estilos Gerais */
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte aplicada */
     background: #f5f7fa;
     margin: 0;
     padding: 20px;
     color: #333;
+    position: relative;
   }
   h1 {
     text-align: center;
     margin-bottom: 5px;
+    font-weight: 700;
   }
+  .content-wrapper {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Canvas para o fundo animado */
+  #canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+
+  /* --- SEÇÃO MAIORES COMPRADORES (RANKING MODERNIZADO) --- */
   .maiores-compradores {
     max-width: 900px;
     margin: 0 auto 30px auto;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     padding: 20px 30px;
     text-align: center;
   }
   .maiores-compradores h2 {
     margin-top: 0;
     color: #2c3e50;
+    font-weight: 700;
   }
   .maiores-compradores ol {
-    padding-left: 1.2rem;
-    margin: 0;
+    padding-left: 0; /* Removido padding padrão da lista */
+    margin: 20px 0 0 0;
     font-size: 1.1rem;
     color: #555;
-    max-width: 300px;
+    max-width: 400px; /* Aumentado para acomodar o novo estilo */
     margin-left: auto;
     margin-right: auto;
     text-align: left;
+    list-style: none; /* Removida a numeração padrão */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Espaçamento entre os cards */
   }
   .maiores-compradores li {
-    margin-bottom: 8px;
-    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease-in-out;
+    background: linear-gradient(135deg, #f9f9f9, #e9e9e9);
   }
+  .maiores-compradores li:hover {
+      transform: scale(1.03);
+  }
+  .maiores-compradores li .emoji {
+      font-size: 1.5rem;
+      margin-right: 15px;
+  }
+  .maiores-compradores li .nome {
+      font-weight: 600;
+      flex-grow: 1; /* Faz o nome ocupar o espaço disponível */
+      color: #34495e;
+  }
+  .maiores-compradores li .qtd {
+      font-weight: 700;
+      color: #fff;
+      background-color: #3498db;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.9em;
+  }
+  /* Estilos especiais para o Top 3 */
+  .maiores-compradores li:nth-child(1) {
+      background: linear-gradient(135deg, #ffd700, #ffc700);
+  }
+  .maiores-compradores li:nth-child(1) .qtd {
+      background-color: #c9a300;
+  }
+  .maiores-compradores li:nth-child(2) {
+      background: linear-gradient(135deg, #c0c0c0, #b0b0b0);
+  }
+   .maiores-compradores li:nth-child(2) .qtd {
+      background-color: #939393;
+  }
+  .maiores-compradores li:nth-child(3) {
+      background: linear-gradient(135deg, #cd7f32, #bf6f22);
+  }
+  .maiores-compradores li:nth-child(3) .qtd {
+      background-color: #a05a15;
+  }
+  /* --- FIM DO RANKING MODERNIZADO --- */
+
+  /* Botão para ver outros compradores */
+  #btn-ver-outros {
+    margin-top: 25px;
+    padding: 10px 18px;
+    background-color: #5dade2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+    font-family: 'Poppins', sans-serif;
+  }
+  #btn-ver-outros:hover {
+    background-color: #3498db;
+  }
+
+  /* Seção Prêmios */
   .premios {
     max-width: 900px;
     margin: 0 auto 30px auto;
@@ -79,6 +169,8 @@
     color: #555;
     margin: 0;
   }
+
+  /* Grid de Rifas */
   .rifas {
     max-width: 900px;
     margin: 0 auto;
@@ -113,17 +205,18 @@
   .rifa:hover {
     filter: brightness(0.9);
   }
+
+  /* Popups e Overlay */
   .popup, .overlay {
     display: none;
-  }
-  .overlay {
     position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.5);
     z-index: 999;
   }
+  .overlay {
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.6);
+  }
   .popup {
-    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -132,28 +225,67 @@
     box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     border-radius: 14px;
     z-index: 1000;
-    max-width: 320px;
-    text-align: center;
+    max-width: 90vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .popup-small {
+      max-width: 320px;
+      text-align: center;
   }
   .popup h3 {
     margin-top: 0;
     font-weight: 700;
-    color: #d32f2f;
+    color: #c0392b;
   }
-  .popup button {
+  .popup-button {
     margin-top: 20px;
     padding: 10px 18px;
-    background-color: #4caf50;
+    background-color: #27ae60;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 14px;
   }
-  .popup button:hover {
-    background-color: #388e3c;
+  .popup-button:hover {
+    background-color: #229954;
   }
+
+  /* Estilos específicos para o popup de 'Outros Compradores' */
+  #outros-compradores-popup h3 {
+      color: #2980b9;
+  }
+  #filtro-compradores {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+  }
+  #lista-outros-compradores {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      overflow-y: auto;
+      text-align: left;
+  }
+  #lista-outros-compradores li {
+      padding: 8px 4px;
+      border-bottom: 1px solid #eee;
+  }
+  #lista-outros-compradores li:last-child {
+      border-bottom: none;
+  }
+  #lista-outros-compradores strong {
+      color: #34495e;
+  }
+
+
+  /* Botão Flutuante de Compra */
   #botao-compra-flutuante {
     position: fixed;
     bottom: 20px;
@@ -178,46 +310,62 @@
 </style>
 </head>
 <body>
-<canvas id="canvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
-<div class="maiores-compradores">
-  <h2>Ranking dos 10 Maiores Compradores</h2>
-  <ol id="ranking-list"></ol>
+<canvas id="canvas"></canvas>
+
+<div class="content-wrapper">
+    <div class="maiores-compradores">
+      <h2>🏆 Ranking dos Maiores Compradores 🏆</h2>
+      <ol id="ranking-list"></ol>
+      <button id="btn-ver-outros">Ver Outros Compradores</button>
+    </div>
+
+    <div class="premios">
+      <div class="premio">
+        <img src="https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_hero.png" alt="iPhone 15" />
+        <h2>1º Lugar</h2>
+        <p>iPhone 15 128GB</p>
+      </div>
+      <div class="premio">
+        <img src="https://m.media-amazon.com/images/I/41ZieyJmyvL._AC_SX679_.jpg" alt="Cesta de Chocolates Cacau Show" />
+        <h2>2º Lugar</h2>
+        <p>Cesta de Chocolates Cacau Show</p>
+      </div>
+    </div>
+
+    <h1>Rifas Formatura</h1>
+    <div id="contador" style="text-align: center; margin-bottom: 20px; font-size: 18px;"></div>
+    <div class="rifas" id="rifas-container"></div>
 </div>
-<div class="premios">
-  <div class="premio">
-    <img src="https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_hero.png" alt="iPhone 15" />
-    <h2>1º Lugar</h2>
-    <p>iPhone 15 128GB</p>
-  </div>
-  <div class="premio">
-    <img src="https://m.media-amazon.com/images/I/41ZieyJmyvL._AC_SX679_.jpg" alt="Cesta de Chocolates Cacau Show" />
-    <h2>2º Lugar</h2>
-    <p>Cesta de Chocolates Cacau Show</p>
-  </div>
-</div>
-<h1>Rifas Formatura</h1>
-<div id="contador" style="text-align: center; margin-bottom: 20px; font-size: 18px;"></div>
-<div class="rifas" id="rifas-container"></div>
-<div class="overlay" id="overlay"></div>
-<div class="popup" id="popup">
+
+<div class="overlay" id="overlay-rifa"></div>
+<div class="popup popup-small" id="popup-rifa">
   <h3>Rifa Reservada</h3>
   <div id="popup-content"></div>
-  <button id="close-popup">Fechar</button>
+  <button class="popup-button" id="close-popup-rifa">Fechar</button>
 </div>
+
+<div class="overlay" id="overlay-outros"></div>
+<div class="popup" id="outros-compradores-popup">
+  <h3>Outros Compradores</h3>
+  <input type="text" id="filtro-compradores" placeholder="Buscar por nome...">
+  <ul id="lista-outros-compradores"></ul>
+  <button class="popup-button" id="close-popup-outros">Fechar</button>
+</div>
+
 <div id="botao-compra-flutuante">
   <button id="enviar-whatsapp">Comprar (0)</button>
 </div>
+
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // --- EFEITO DE FUNDO COM CANVAS ---
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  const mouse = {
-    x: undefined,
-    y: undefined
-  };
-
+  const mouse = { x: undefined, y: undefined };
   const trail = [];
   const trailLength = 20;
   const colors = ['#2c3e50', '#e74c3c', '#ecf0f1', '#3498db', '#2980b9'];
@@ -232,12 +380,12 @@
   });
 
   function drawTrail() {
-    for (let i = 0; i < trail.length; i++) {
+    trail.forEach(p => {
       ctx.beginPath();
-      ctx.arc(trail[i].x, trail[i].y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = trail[i].color;
+      ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
       ctx.fill();
-    }
+    });
   }
 
   function animate() {
@@ -246,684 +394,333 @@
     requestAnimationFrame(animate);
   }
   animate();
-
-  const rifasReservadas = {
-  "0507": "Adelar Israel",
-  "1003": "Adelar Israel",
-  "0123": "Ademir Zonatto",
-  "0108": "Ademir Zonatto",
-  "1209": "Adão Morais",
-  "2000": "Ana Barcella",
-  "0002": "Ana Barcella",
-  "1864": "Andrei Rodrigues",
-  "1670": "Andrei Rodrigues",
-  "0712": "Andrei Rodrigues",
-  "1102": "Andrei Velloso",
-  "1103": "Andrei Velloso",
-  "1104": "Andrei Velloso",
-  "1105": "Andrei Velloso",
-  "1107": "Andrei Velloso",
-  "1108": "Andrei Velloso",
-  "1109": "Andrei Velloso",
-  "1110": "Andrei Velloso",
-  "1111": "Andrei Velloso",
-  "1114": "Andrei Velloso",
-  "0053": "Andrew Perraro",
-  "0061": "Andrew Perraro",
-  "0169": "Andrew Perraro",
-  "0168": "Andrew Perraro",
-  "0223": "Andrew Perraro",
-  "0327": "Andrew Perraro",
-  "0357": "Andrew Perraro",
-  "0364": "Andrew Perraro",
-  "0408": "Andrew Perraro",
-  "0771": "Andrew Perraro",
-  "0531": "Alexandre Rodrigues",
-  "0608": "Alex Sygecom",
-  "0013": "Allan Pereira",
-  "0022": "Allan Pereira",
-  "1325": "Alessandra Abreu",
-  "1331": "Alessandra Abreu",
-  "1362": "Alessandra Abreu",
-  "1380": "Alessandra Abreu",
-  "1350": "Alessandra Abreu",
-  "0120": "Aline Dutra",
-  "0122": "Aline Dutra",
-  "0126": "Aline Dutra",
-  "0146": "Aline Dutra",
-  "0162": "Aline Dutra",
-  "0023": "Amanda Silva",
-  "1990": "Amanda Silva",
-  "1987": "Amanda Silva",
-  "1309": "Amanda Souza",
-  "1310": "Amanda Souza",
-  "1320": "Annelise Evangelista",
-  "1337": "Annelise Evangelista",
-  "1342": "Annelise Evangelista",
-  "1349": "Annelise Evangelista",
-  "1359": "Annelise Evangelista",
-  "1190": "Annelise Evangelista",
-  "1192": "Annelise Evangelista",
-  "1195": "Annelise Evangelista",
-  "0687": "Andrieli Machado",
-  "0136": "Alzira Dos Santos",
-  "0194": "Alzira Dos Santos",
-  "1920": "Bruna Duarte",
-  "0087": "Bruna Rocha",
-  "0137": "Bruna Rocha",
-  "0147": "Bruna Rocha",
-  "0157": "Bruna Rocha",
-  "0167": "Bruna Rocha",
-  "1148": "Bruna Roth",
-  "0041": "Bruno Dutra",
-  "0141": "Bruno Dutra",
-  "0241": "Bruno Dutra",
-  "0441": "Bruno Dutra",
-  "0659": "Bruno Carravetta",
-  "0667": "Bruno Carravetta",
-  "0673": "Bruno Carravetta",
-  "1312": "Carla Iwanczuk",
-  "1369": "Carla Iwanczuk",
-  "0860": "Carla Iwanczuk",
-  "0437": "Carla Iwanczuk",
-  "0789": "Carla Iwanczuk",
-  "1200": "Carla Iwanczuk",
-  "0888": "Carla Iwanczuk",
-  "0319": "Carla Iwanczuk",
-  "0056": "Carla Iwanczuk",
-  "1175": "Carla Iwanczuk",
-  "1326": "Carla Iwanczuk",
-  "0208": "Carla Iwanczuk",
-  "1197": "Carla Iwanczuk",
-  "0103": "Carla Iwanczuk",
-  "1203": "Carla Iwanczuk",
-  "1834": "Carla Iwanczuk",
-  "1328": "Carla Iwanczuk",
-  "1964": "Carla Iwanczuk",
-  "1610": "Carla Iwanczuk",
-  "1077": "Carla Iwanczuk",
-  "1080": "Carla Iwanczuk",
-  "1094": "Carla Iwanczuk",
-  "1097": "Carla Iwanczuk",
-  "1098": "Carla Iwanczuk",
-  "1096": "Carla Iwanczuk",
-  "0914": "Carla Iwanczuk",
-  "0927": "Carla Iwanczuk",
-  "0930": "Carla Iwanczuk",
-  "0054": "Carlos Cremonini",
-  "0358": "Carlos Cremonini",
-  "0505": "Carlos Cremonini",
-  "0625": "Carlos Cremonini",
-  "1150": "Carlos Cremonini",
-  "0615": "Charles Mayer",
-  "0100": "Cintia Botta",
-  "0102": "Cintia Botta",
-  "0190": "Cintia Botta",
-  "1526": "Claudia Daiana",
-  "0177": "Cláudio Thiago",
-  "0064": "Cristiane Carnelutti",
-  "0065": "Cristiane Carnelutti",
-  "0066": "Cristiane Carnelutti",
-  "0067": "Cristiane Carnelutti",
-  "0068": "Cristiane Carnelutti",
-  "1124": "Cristina Jung",
-  "1181": "Daniel Rocha",
-  "1118": "Daniela Gonsalves",
-  "1119": "Daniela Gonsalves",
-  "1143": "Daniela Chies",
-  "0250": "Daniele Hendler",
-  "0302": "Daniele Hendler",
-  "0336": "Daniele Hendler",
-  "0405": "Daniele Hendler",
-  "0511": "Daniele Hendler",
-  "0591": "Daniele Hendler",
-  "0173": "Danieli Krause",
-  "1146": "Doutor André",
-  "1149": "Doutor André",
-  "0600": "Edson Dorvis",
-  "0016": "Eliete Santos",
-  "0047": "Eliete Santos",
-  "0113": "Eloi Natalia",
-  "0119": "Eloi Natalia",
-  "0132": "Eloi Natalia",
-  "0154": "Eloi Natalia",
-  "0155": "Eloi Natalia",
-  "0020": "Erica Dutra",
-  "0090": "Erica Dutra",
-  "0096": "Erica Dutra",
-  "0171": "Erica Dutra",
-  "1300": "Eva Tartari",
-  "1301": "Eva Tartari",
-  "1156": "Eva Tartari",
-  "1157": "Eva Tartari",
-  "1173": "Eva Tartari",
-  "0607": "Fabiana Lima",
-  "0018": "Fabiano Amaral",
-  "1000": "Fabiano Amaral",
-  "1315": "Fabiano Amaral",
-  "1316": "Fabiano Amaral",
-  "1974": "Fabiano Amaral",
-  "0075": "Fábio Paz",
-  "0076": "Fábio Paz",
-  "0114": "Fabio Schinato",
-  "0116": "Fabio Schinato",
-  "0124": "Fabio Schinato",
-  "0125": "Fabio Schinato",
-  "1333": "FeFa Duarte",
-  "1377": "FeFa Duarte",
-  "1127": "FeFa Duarte",
-  "1135": "FeFa Duarte",
-  "1381": "FeFa Duarte",
-  "1191": "FeFa Duarte",
-  "1193": "FeFa Duarte",
-  "1196": "FeFa Duarte",
-  "0017": "Felipe Braga",
-  "0071": "Felipe Braga",
-  "0030": "Felipe Braga",
-  "0093": "Felipe Braga",
-  "0110": "Felipe Braga",
-  "0697": "Felipe Arend",
-  "1302": "Fernanda Bochi",
-  "1303": "Fernanda Bochi",
-  "1304": "Fernanda Bochi",
-  "1116": "Fernando Zandoná",
-  "1142": "Fernando Zandoná",
-  "1176": "Fernando Zandoná",
-  "0283": "Filipe Gil",
-  "0288": "Filipe Gil",
-  "0287": "Filipe Gil",
-  "0286": "Filipe Gil",
-  "0285": "Filipe Gil",
-  "0284": "Filipe Gil",
-  "0340": "Filipe Gil",
-  "0338": "Filipe Gil",
-  "0344": "Filipe Gil",
-  "0352": "Filipe Gil",
-  "0373": "Filipe Gil",
-  "0381": "Filipe Gil",
-  "0026": "Filipe Tiago",
-  "0048": "Filipe Tiago",
-  "0050": "Filipe Tiago",
-  "0052": "Filipe Tiago",
-  "0029": "Flávia Roberta",
-  "0097": "Flávia Roberta",
-  "1973": "Flávia Roberta",
-  "0719": "Flávia Silveira",
-  "0560": "Flávia Silveira",
-  "0227": "Flávia Silveira",
-  "1159": "Flavio Couto",
-  "0613": "Franciele Nunes",
-  "1125": "Francisco Simanis",
-  "1126": "Francisco Simanis",
-  "1323": "Gabriel Abreu",
-  "1179": "Gabriel Abreu",
-  "1172": "Gabriel Abreu",
-  "0610": "Gabriel Sygecom",
-  "0611": "Gabriel Sygecom",
-  "1845": "Gabriel Vinagre",
-  "0006": "Gabriel Vinagre",
-  "0019": "Gabriel Vinagre",
-  "0072": "Gabriel Vinagre",
-  "0001": "Gabriel o Implacável",
-  "1909": "Gabriel o Implacável",
-  "0011": "Gabriela Motta",
-  "1311": "Gabriela Motta",
-  "1122": "Gerson Godinho",
-  "1128": "Gerson Godinho",
-  "0506": "Georgia Mallmann",
-  "0384": "Gian Berzagui",
-  "0077": "Gian Berzagui",
-  "1145": "Giovana Borges",
-  "1152": "Giovani Bigolin",
-  "1153": "Giovani Bigolin",
-  "1154": "Giovani Bigolin",
-  "0644": "Graciane Gomes",
-  "1115": "Guilherme Taseschini",
-  "0085": "Guilherme Zawacki",
-  "0898": "Guilherme Zawacki",
-  "0007": "Henrique Santos",
-  "0777": "Henrique Santos",
-  "0665": "Henrique Antunes",
-  "0062": "Henrique Gattini",
-  "0063": "Henrique Gattini",
-  "0215": "Ivete Puchalski",
-  "1895": "Isaac Alves",
-  "1802": "Ivete Puchalski",
-  "1901": "Ivete Puchalski",
-  "1041": "Ivete Puchalski",
-  "1803": "Ivete Puchalski",
-  "0617": "Jean Alexander",
-  "1133": "Joane Calderaro",
-  "1134": "Joane Calderaro",
-  "1136": "Joane Calderaro",
-  "1137": "Joane Calderaro",
-  "1138": "Joane Calderaro",
-  "0028": "João Rodrigues",
-  "0099": "João Rodrigues",
-  "0049": "João Rodrigues",
-  "0606": "João Sastre",
-  "0128": "Joceli Gomes",
-  "0129": "Joceli Gomes",
-  "0130": "Joceli Gomes",
-  "1120": "Jose Spizzirri",
-  "1121": "Jose Spizzirri",
-  "0701": "Julia Ivanczuk",
-  "0702": "Julia Ivanczuk",
-  "0703": "Julia Ivanczuk",
-  "1198": "Julia Machado",
-  "1130": "Juliano Vargas",
-  "1131": "Juliano Vargas",
-  "0656": "Kevim Acosta",
-  "0621": "Kevim Acosta",
-  "0675": "Kevim Acosta",
-  "0272": "Kevim Acosta",
-  "0440": "Kevim Acosta",
-  "0477": "Kevim Acosta",
-  "1940": "Kevim Acosta",
-  "1955": "Kevim Acosta",
-  "1903": "Kevim Acosta",
-  "1910": "Kevim Acosta",
-  "0685": "Kelen Lescano",
-  "0906": "Kimberly Iwanczuk",
-  "0603": "Kimberly Iwanczuk",
-  "1777": "Kimberly Iwanczuk",
-  "1992": "Kimberly Iwanczuk",
-  "1999": "Kimberly Iwanczuk",
-  "1205": "Kimberly Iwanczuk",
-  "1206": "Kimberly Iwanczuk",
-  "1207": "Kimberly Iwanczuk",
-  "1208": "Kimberly Iwanczuk",
-  "1216": "Kimberly Iwanczuk",
-  "1211": "Kimberly Iwanczuk",
-  "1212": "Kimberly Iwanczuk",
-  "1213": "Kimberly Iwanczuk",
-  "1214": "Kimberly Iwanczuk",
-  "1215": "Kimberly Iwanczuk",
-  "1308": "Larissa Lerey",
-  "1318": "Larissa Lerey",
-  "1113": "Letícia Torres",
-  "1117": "Letícia Torres",
-  "1123": "Letícia Torres",
-  "1347": "Letícia Torres",
-  "1348": "Letícia Torres",
-  "0627": "Lidio Gall",
-  "0628": "Lidio Gall",
-  "0629": "Lidio Gall",
-  "0107": "Lorenzo Santos",
-  "0156": "Lorenzo Santos",
-  "0605": "Luiza Stassen",
-  "0070": "Mara Marques",
-  "0175": "Mara Marques",
-  "0180": "Mara Marques",
-  "0270": "Mara Marques",
-  "0419": "Mara Marques",
-  "0575": "Mara Marques",
-  "0619": "Mara Marques",
-  "0640": "Mara Marques",
-  "0830": "Mara Marques",
-  "0975": "Mara Marques",
-  "0308": "Mara Marques",
-  "0512": "Mara Marques",
-  "0404": "Mara Marques",
-  "1705": "Mara Marques",
-  "1427": "Mara Marques",
-  "1532": "Mara Marques",
-  "1178": "Mara Marques",
-  "1639": "Mara Marques",
-  "0926": "Mara Marques",
-  "1264": "Mara Marques",
-  "0700": "Mari Marcola",
-  "0055": "Maria Flores",
-  "1100": "Maria Valéria",
-  "1106": "Maria Valéria",
-  "0004": "Mariana Collares",
-  "0616": "Marcelo Rosa",
-  "0690": "Marcello Henrique",
-  "0216": "Marli Cremonini",
-  "0604": "Matheus Silva",
-  "0904": "Matheus Nunes",
-  "1998": "Matheus Nunes",
-  "0500": "Murilo Bellon",
-  "0501": "Murilo Bellon",
-  "0502": "Murilo Bellon",
-  "0503": "Murilo Bellon",
-  "0504": "Murilo Bellon",
-  "1141": "Natalia Roese",
-  "0661": "Natasha Balhejo",
-  "0135": "Neide Dutra",
-  "0149": "Neide Dutra",
-  "0174": "Neide Dutra",
-  "0304": "Neide Dutra",
-  "1958": "Neide Dutra",
-  "1970": "Neide Dutra",
-  "1971": "Neide Dutra",
-  "1972": "Neide Dutra",
-  "1975": "Neide Dutra",
-  "1982": "Neide Dutra",
-  "1996": "Neide Dutra",
-  "1978": "Nicole Machado",
-  "1965": "Nicole Machado",
-  "1966": "Nicole Machado",
-  "0626": "Onofre Ivanczuk",
-  "0953": "Onofre Ivanczuk",
-  "0747": "Onofre Ivanczuk",
-  "0754": "Onofre Ivanczuk",
-  "1202": "Orlando Xandão",
-  "1139": "Osório",
-  "1140": "Osório",
-  "0622": "Paulo Roberto",
-  "1305": "Patrícia Bassotto",
-  "1313": "Patrícia Bassotto",
-  "1322": "Patrícia Bassotto",
-  "1166": "Patrícia Bassotto",
-  "1167": "Patrícia Bassotto",
-  "0200": "Patricia Free",
-  "1399": "Pedro Borba",
-  "1101": "Pedro Borba",
-  "1199": "Pedro Borba",
-  "1194": "Pedro Borba",
-  "1174": "Pedro Borba",
-  "1177": "Pedro Borba",
-  "0159": "Pedro Costa",
-  "0115": "Pedro Costa",
-  "0266": "Pedro Costa",
-  "0368": "Pedro Costa",
-  "0031": "Pedro Silva",
-  "0036": "Pedro Silva",
-  "0038": "Pedro Silva",
-  "0039": "Pedro Silva",
-  "1306": "Pierre Rassier",
-  "1307": "Pierre Rassier",
-  "1710": "Rafael Abreu",
-  "1711": "Rafael Abreu",
-  "1712": "Rafael Abreu",
-  "1713": "Rafael Abreu",
-  "1714": "Rafael Abreu",
-  "1184": "Rafael Abreu",
-  "1185": "Rafael Abreu",
-  "1189": "Rafael Abreu",
-  "0601": "Rafael Souza",
-  "0609": "Raquel Fischer",
-  "0027": "Reginaldo Silveira",
-  "0032": "Reginaldo Silveira",
-  "0059": "Reginaldo Silveira",
-  "0069": "Reginaldo Silveira",
-  "1968": "Reginaldo Silveira",
-  "1997": "Renan Santos",
-  "1245": "Ricardo Iwanczuk",
-  "0464": "Ricardo Iwanczuk",
-  "0880": "Ricardo Iwanczuk",
-  "0347": "Ricardo Iwanczuk",
-  "0977": "Ricardo Iwanczuk",
-  "0527": "Ricardo Iwanczuk",
-  "0781": "Ricardo Iwanczuk",
-  "0021": "Ricardo Iwanczuk",
-  "0299": "Ricardo Iwanczuk",
-  "0060": "Ricardo Iwanczuk",
-  "0058": "Ricardo Iwanczuk",
-  "0211": "Ricardo Iwanczuk",
-  "0198": "Ricardo Iwanczuk",
-  "0199": "Ricardo Iwanczuk",
-  "0148": "Ricardo Iwanczuk",
-  "1327": "Ricardo Iwanczuk",
-  "1329": "Ricardo Iwanczuk",
-  "1330": "Ricardo Iwanczuk",
-  "0710": "Ricardo Iwanczuk",
-  "0800": "Ricardo Iwanczuk",
-  "0801": "Ricardo Iwanczuk",
-  "1016": "Ricardo Iwanczuk",
-  "1017": "Ricardo Iwanczuk",
-  "1018": "Ricardo Iwanczuk",
-  "1019": "Ricardo Iwanczuk",
-  "0900": "Ricardo Iwanczuk",
-  "0902": "Ricardo Iwanczuk",
-  "0903": "Ricardo Iwanczuk",
-  "0005": "Ricardo Vilar",
-  "0010": "Ricardo Vilar",
-  "0009": "Rita Martins",
-  "0121": "Robson Telesforo",
-  "0212": "Robson Telesforo",
-  "1273": "Robson Telesforo",
-  "0912": "Robson Telesforo",
-  "0243": "Rodrigo*",
-  "0003": "Roger Alexandre",
-  "0008": "Roger Alexandre",
-  "0040": "Roger Alexandre",
-  "0051": "Roger Alexandre",
-  "0131": "Roger Alexandre",
-  "0133": "Roger Alexandre",
-  "0134": "Roger Alexandre",
-  "1625": "Roger Alexandre",
-  "0033": "Ronaldo Samsel",
-  "0034": "Ronaldo Samsel",
-  "0035": "Ronaldo Samsel",
-  "1599": "Rosana Duarte",
-  "1943": "Rosana Duarte",
-  "1961": "Rosana Duarte",
-  "1984": "Rosana Duarte",
-  "1986": "Rosana Duarte",
-  "0578": "Rosana Duarte",
-  "0655": "Rosana Duarte",
-  "1959": "Rosana Duarte",
-  "1988": "Rosana Duarte",
-  "0179": "Rosana Duarte",
-  "0261": "Rosana Duarte",
-  "0643": "Rosana Duarte",
-  "1938": "Rosana Duarte",
-  "1945": "Rosana Duarte",
-  "1939": "Rosana Duarte",
-  "0612": "Rosana Duarte",
-  "0699": "Rosana Duarte",
-  "0618": "Rosana Duarte",
-  "0555": "Rosana Duarte",
-  "1555": "Rosana Duarte",
-  "0012": "Roseli Ivankio",
-  "0112": "Roseli Ivankio",
-  "0238": "Roseli Ivankio",
-  "0118": "Roseli Ivankio",
-  "0057": "Roseli Ivankio",
-  "0309": "Roseli Ivankio",
-  "0333": "Roseli Ivankio",
-  "0360": "Roseli Ivankio",
-  "0520": "Roseli Ivankio",
-  "0733": "Roseli Ivankio",
-  "0015": "Roseli Ivankio",
-  "0315": "Roseli Ivankio",
-  "1658": "Roseli Ivankio",
-  "0213": "Rosi Duarte",
-  "0024": "Sabrina Bianca",
-  "0084": "Sabrina Bianca",
-  "0025": "Sandra Claudemir",
-  "0117": "Sandra Claudemir",
-  "0205": "Sandra Claudemir",
-  "0841": "Sandra Claudemir",
-  "0976": "Sandra Claudemir",
-  "1453": "Sandra Maciel",
-  "1454": "Sandra Maciel",
-  "1455": "Sandra Maciel",
-  "1346": "Sérgio Neuwald",
-  "1314": "Sérgio Neuwald",
-  "1169": "Sérgio Neuwald",
-  "1170": "Sérgio Neuwald",
-  "0528": "Sérgio Medeiros",
-  "0535": "Sérgio Medeiros",
-  "0538": "Sérgio Medeiros",
-  "0576": "Sérgio Medeiros",
-  "1186": "Sérgio Medeiros",
-  "1187": "Sérgio Medeiros",
-  "1188": "Sérgio Medeiros",
-  "1162": "Shayanna Oliveira",
-  "1182": "Silvio JF",
-  "1183": "Silvio JF",
-  "1993": "Suelen Soares",
-  "1995": "Suelen Soares",
-  "0042": "Suze Pereira",
-  "0043": "Suze Pereira",
-  "0044": "Suze Pereira",
-  "0045": "Suze Pereira",
-  "0046": "Suze Pereira",
-  "1132": "Suzen Brum",
-  "1147": "Suzen Brum",
-  "0614": "Taline Lima",
-  "0602": "Thales Dias",
-  "0014": "Thiago Marques",
-  "0037": "Thiago Marques",
-  "0089": "Thiago Marques",
-  "0101": "Thiago Marques",
-  "0127": "Thiago Marques",
-  "0153": "Thiago Marques",
-  "0188": "Thiago Marques",
-  "0193": "Thiago Marques",
-  "0209": "Thiago Marques",
-  "0237": "Thiago Marques",
-  "0268": "Thiago Marques",
-  "0290": "Thiago Marques",
-  "0305": "Thiago Marques",
-  "0412": "Thiago Marques",
-  "0467": "Thiago Marques",
-  "0509": "Thiago Marques",
-  "0624": "Thiago Marques",
-  "0793": "Thiago Marques",
-  "1463": "Thiago Marques",
-  "1576": "Thiago Marques",
-  "1729": "Thiago Marques",
-  "1837": "Thiago Marques",
-  "1543": "Thiago Marques",
-  "1687": "Thiago Marques",
-  "1210": "Thiago Marques",
-  "0709": "Thiago Marques",
-  "1317": "Valéria Abreu",
-  "1319": "Valéria Abreu",
-  "1321": "Valéria Abreu",
-  "1324": "Valéria Abreu",
-  "1163": "Valéria Abreu",
-  "1164": "Valéria Abreu",
-  "1165": "Valéria Abreu",
-  "0681": "Victor Uczak",
-  "0666": "Victor Uczak",
-  "0073": "Victor Dutra",
-  "0074": "Victor Dutra",
-  "0078": "Victor Dutra",
-  "0079": "Victor Dutra",
-  "0080": "Victor Dutra",
-  "0081": "Victor Dutra",
-  "0082": "Victor Dutra",
-  "0083": "Victor Dutra",
-  "0086": "Victor Dutra",
-  "0088": "Victor Dutra",
-  "0091": "Victor Dutra",
-  "0092": "Victor Dutra",
-  "0094": "Victor Dutra",
-  "0095": "Victor Dutra",
-  "0098": "Victor Dutra",
-  "0104": "Victor Dutra",
-  "0105": "Victor Dutra",
-  "0106": "Victor Dutra",
-  "0109": "Victor Dutra",
-  "0111": "Victor Dutra",
-  "0533": "Vilane Dalhui",
-  "0189": "Vilma Mota",
-  "0819": "Vilma Mota",
-  "1989": "Vilma Mota",
-  "1977": "Viviane Acosta",
-  "1994": "Viviane Acosta",
-  "0195": "Viviane Acosta",
-  "0847": "Viviane Acosta",
-  "1956": "Viviane Acosta",
-  "0988": "William Tanski",
-  "1112": "William Tanski",
-  "1129": "Wilson Rocha",
-  "1144": "Wilson Rocha",
-  "1151": "Wilson Rocha",
-  "1155": "Wilson Rocha",
-  "1158": "Wilson Rocha",
-  "1160": "Wilson Rocha",
-  "1161": "Wilson Rocha",
-  "1168": "Wilson Rocha",
-  "1171": "Wilson Rocha",
-  "1180": "Wilson Rocha",
-  "0317": "Zenir Hendler",
-  "0318": "Zenir Hendler",
-  "0326": "Zenir Hendler"
-}
-  const contagemCompradores = {};
-  for(const num in rifasReservadas){
-    const comprador = rifasReservadas[num];
-    contagemCompradores[comprador] = (contagemCompradores[comprador] || 0) + 1;
-  }
-  const ranking = Object.entries(contagemCompradores).sort((a,b) => b[1] - a[1]).slice(0,10);
-  const rankingList = document.getElementById('ranking-list');
-  ranking.forEach(([nome, qtd]) => {
-    const li = document.createElement('li');
-    li.textContent = `${nome} — ${qtd} rifas`;
-    rankingList.appendChild(li);
+  window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
   });
 
+  // --- DADOS E CONSTANTES ---
+  const rifasReservadas = {
+      "0507": "Adelar Israel", "1003": "Adelar Israel", "0123": "Ademir Zonatto", "0108": "Ademir Zonatto",
+      "1209": "Adão Morais", "2000": "Ana Barcella", "0002": "Ana Barcella", "1864": "Andrei Rodrigues",
+      "1670": "Andrei Rodrigues", "0712": "Andrei Rodrigues", "1102": "Andrei Velloso", "1103": "Andrei Velloso",
+      "1104": "Andrei Velloso", "1105": "Andrei Velloso", "1107": "Andrei Velloso", "1108": "Andrei Velloso",
+      "1109": "Andrei Velloso", "1110": "Andrei Velloso", "1111": "Andrei Velloso", "1114": "Andrei Velloso",
+      "0053": "Andrew Perraro", "0061": "Andrew Perraro", "0169": "Andrew Perraro", "0168": "Andrew Perraro",
+      "0223": "Andrew Perraro", "0327": "Andrew Perraro", "0357": "Andrew Perraro", "0364": "Andrew Perraro",
+      "0408": "Andrew Perraro", "0771": "Andrew Perraro", "0531": "Alexandre Rodrigues", "0608": "Alex Sygecom",
+      "0013": "Allan Pereira", "0022": "Allan Pereira", "1325": "Alessandra Abreu", "1331": "Alessandra Abreu",
+      "1362": "Alessandra Abreu", "1380": "Alessandra Abreu", "1350": "Alessandra Abreu", "0120": "Aline Dutra",
+      "0122": "Aline Dutra", "0126": "Aline Dutra", "0146": "Aline Dutra", "0162": "Aline Dutra", "0023": "Amanda Silva",
+      "1990": "Amanda Silva", "1987": "Amanda Silva", "1309": "Amanda Souza", "1310": "Amanda Souza",
+      "1320": "Annelise Evangelista", "1337": "Annelise Evangelista", "1342": "Annelise Evangelista",
+      "1349": "Annelise Evangelista", "1359": "Annelise Evangelista", "1190": "Annelise Evangelista",
+      "1192": "Annelise Evangelista", "1195": "Annelise Evangelista", "0687": "Andrieli Machado",
+      "0136": "Alzira Dos Santos", "0194": "Alzira Dos Santos", "1920": "Bruna Duarte", "0087": "Bruna Rocha",
+      "0137": "Bruna Rocha", "0147": "Bruna Rocha", "0157": "Bruna Rocha", "0167": "Bruna Rocha", "1148": "Bruna Roth",
+      "0041": "Bruno Dutra", "0141": "Bruno Dutra", "0241": "Bruno Dutra", "0441": "Bruno Dutra", "0659": "Bruno Carravetta",
+      "0667": "Bruno Carravetta", "0673": "Bruno Carravetta", "1312": "Carla Iwanczuk", "1369": "Carla Iwanczuk",
+      "0860": "Carla Iwanczuk", "0437": "Carla Iwanczuk", "0789": "Carla Iwanczuk", "1200": "Carla Iwanczuk",
+      "0888": "Carla Iwanczuk", "0319": "Carla Iwanczuk", "0056": "Carla Iwanczuk", "1175": "Carla Iwanczuk",
+      "1326": "Carla Iwanczuk", "0208": "Carla Iwanczuk", "1197": "Carla Iwanczuk", "0103": "Carla Iwanczuk",
+      "1203": "Carla Iwanczuk", "1834": "Carla Iwanczuk", "1328": "Carla Iwanczuk", "1964": "Carla Iwanczuk",
+      "1610": "Carla Iwanczuk", "1077": "Carla Iwanczuk", "1080": "Carla Iwanczuk", "1094": "Carla Iwanczuk",
+      "1097": "Carla Iwanczuk", "1098": "Carla Iwanczuk", "1096": "Carla Iwanczuk", "0914": "Carla Iwanczuk",
+      "0927": "Carla Iwanczuk", "0930": "Carla Iwanczuk", "0054": "Carlos Cremonini", "0358": "Carlos Cremonini",
+      "0505": "Carlos Cremonini", "0625": "Carlos Cremonini", "1150": "Carlos Cremonini", "0615": "Charles Mayer",
+      "0100": "Cintia Botta", "0102": "Cintia Botta", "0190": "Cintia Botta", "1526": "Claudia Daiana",
+      "0177": "Cláudio Thiago", "0064": "Cristiane Carnelutti", "0065": "Cristiane Carnelutti", "0066": "Cristiane Carnelutti",
+      "0067": "Cristiane Carnelutti", "0068": "Cristiane Carnelutti", "1124": "Cristina Jung", "1181": "Daniel Rocha",
+      "1118": "Daniela Gonsalves", "1119": "Daniela Gonsalves", "1143": "Daniela Chies", "0250": "Daniele Hendler",
+      "0302": "Daniele Hendler", "0336": "Daniele Hendler", "0405": "Daniele Hendler", "0511": "Daniele Hendler",
+      "0591": "Daniele Hendler", "0173": "Danieli Krause", "1146": "Doutor André", "1149": "Doutor André",
+      "0600": "Edson Dorvis", "0016": "Eliete Santos", "0047": "Eliete Santos", "0113": "Eloi Natalia",
+      "0119": "Eloi Natalia", "0132": "Eloi Natalia", "0154": "Eloi Natalia", "0155": "Eloi Natalia",
+      "0020": "Erica Dutra", "0090": "Erica Dutra", "0096": "Erica Dutra", "0171": "Erica Dutra", "1300": "Eva Tartari",
+      "1301": "Eva Tartari", "1156": "Eva Tartari", "1157": "Eva Tartari", "1173": "Eva Tartari", "0607": "Fabiana Lima",
+      "0018": "Fabiano Amaral", "1000": "Fabiano Amaral", "1315": "Fabiano Amaral", "1316": "Fabiano Amaral",
+      "1974": "Fabiano Amaral", "0075": "Fábio Paz", "0076": "Fábio Paz", "0114": "Fabio Schinato",
+      "0116": "Fabio Schinato", "0124": "Fabio Schinato", "0125": "Fabio Schinato", "1333": "FeFa Duarte",
+      "1377": "FeFa Duarte", "1127": "FeFa Duarte", "1135": "FeFa Duarte", "1381": "FeFa Duarte",
+      "1191": "FeFa Duarte", "1193": "FeFa Duarte", "1196": "FeFa Duarte", "0017": "Felipe Braga",
+      "0071": "Felipe Braga", "0030": "Felipe Braga", "0093": "Felipe Braga", "0110": "Felipe Braga",
+      "0697": "Felipe Arend", "1302": "Fernanda Bochi", "1303": "Fernanda Bochi", "1304": "Fernanda Bochi",
+      "1116": "Fernando Zandoná", "1142": "Fernando Zandoná", "1176": "Fernando Zandoná", "0283": "Filipe Gil",
+      "0288": "Filipe Gil", "0287": "Filipe Gil", "0286": "Filipe Gil", "0285": "Filipe Gil", "0284": "Filipe Gil",
+      "0340": "Filipe Gil", "0338": "Filipe Gil", "0344": "Filipe Gil", "0352": "Filipe Gil", "0373": "Filipe Gil",
+      "0381": "Filipe Gil", "0026": "Filipe Tiago", "0048": "Filipe Tiago", "0050": "Filipe Tiago",
+      "0052": "Filipe Tiago", "0029": "Flávia Roberta", "0097": "Flávia Roberta", "1973": "Flávia Roberta",
+      "0719": "Flávia Silveira", "0560": "Flávia Silveira", "0227": "Flávia Silveira", "1159": "Flavio Couto",
+      "0613": "Franciele Nunes", "1125": "Francisco Simanis", "1126": "Francisco Simanis", "1323": "Gabriel Abreu",
+      "1179": "Gabriel Abreu", "1172": "Gabriel Abreu", "0610": "Gabriel Sygecom", "0611": "Gabriel Sygecom",
+      "1845": "Gabriel Vinagre", "0006": "Gabriel Vinagre", "0019": "Gabriel Vinagre", "0072": "Gabriel Vinagre",
+      "0001": "Gabriel o Implacável", "1909": "Gabriel o Implacável", "0011": "Gabriela Motta",
+      "1311": "Gabriela Motta", "1122": "Gerson Godinho", "1128": "Gerson Godinho", "0506": "Georgia Mallmann",
+      "0384": "Gian Berzagui", "0077": "Gian Berzagui", "1145": "Giovana Borges", "1152": "Giovani Bigolin",
+      "1153": "Giovani Bigolin", "1154": "Giovani Bigolin", "0644": "Graciane Gomes", "1115": "Guilherme Taseschini",
+      "0085": "Guilherme Zawacki", "0898": "Guilherme Zawacki", "0007": "Henrique Santos", "0777": "Henrique Santos",
+      "0665": "Henrique Antunes", "0062": "Henrique Gattini", "0063": "Henrique Gattini", "0215": "Ivete Puchalski",
+      "1895": "Isaac Alves", "1802": "Ivete Puchalski", "1901": "Ivete Puchalski", "1041": "Ivete Puchalski",
+      "1803": "Ivete Puchalski", "0617": "Jean Alexander", "1133": "Joane Calderaro", "1134": "Joane Calderaro",
+      "1136": "Joane Calderaro", "1137": "Joane Calderaro", "1138": "Joane Calderaro", "0028": "João Rodrigues",
+      "0099": "João Rodrigues", "0049": "João Rodrigues", "0606": "João Sastre", "0128": "Joceli Gomes",
+      "0129": "Joceli Gomes", "0130": "Joceli Gomes", "1120": "Jose Spizzirri", "1121": "Jose Spizzirri",
+      "0701": "Julia Ivanczuk", "0702": "Julia Ivanczuk", "0703": "Julia Ivanczuk", "1198": "Julia Machado",
+      "1130": "Juliano Vargas", "1131": "Juliano Vargas", "0656": "Kevim Acosta", "0621": "Kevim Acosta",
+      "0675": "Kevim Acosta", "0272": "Kevim Acosta", "0440": "Kevim Acosta", "0477": "Kevim Acosta",
+      "1940": "Kevim Acosta", "1955": "Kevim Acosta", "1903": "Kevim Acosta", "1910": "Kevim Acosta",
+      "0685": "Kelen Lescano", "0906": "Kimberly Iwanczuk", "0603": "Kimberly Iwanczuk", "1777": "Kimberly Iwanczuk",
+      "1992": "Kimberly Iwanczuk", "1999": "Kimberly Iwanczuk", "1205": "Kimberly Iwanczuk", "1206": "Kimberly Iwanczuk",
+      "1207": "Kimberly Iwanczuk", "1208": "Kimberly Iwanczuk", "1216": "Kimberly Iwanczuk", "1211": "Kimberly Iwanczuk",
+      "1212": "Kimberly Iwanczuk", "1213": "Kimberly Iwanczuk", "1214": "Kimberly Iwanczuk", "1215": "Kimberly Iwanczuk",
+      "1308": "Larissa Lerey", "1318": "Larissa Lerey", "1113": "Letícia Torres", "1117": "Letícia Torres",
+      "1123": "Letícia Torres", "1347": "Letícia Torres", "1348": "Letícia Torres", "0627": "Lidio Gall",
+      "0628": "Lidio Gall", "0629": "Lidio Gall", "0107": "Lorenzo Santos", "0156": "Lorenzo Santos",
+      "0605": "Luiza Stassen", "0070": "Mara Marques", "0175": "Mara Marques", "0180": "Mara Marques",
+      "0270": "Mara Marques", "0419": "Mara Marques", "0575": "Mara Marques", "0619": "Mara Marques",
+      "0640": "Mara Marques", "0830": "Mara Marques", "0975": "Mara Marques", "0308": "Mara Marques",
+      "0512": "Mara Marques", "0404": "Mara Marques", "1705": "Mara Marques", "1427": "Mara Marques",
+      "1532": "Mara Marques", "1178": "Mara Marques", "1639": "Mara Marques", "0926": "Mara Marques",
+      "1264": "Mara Marques", "0700": "Mari Marcola", "0055": "Maria Flores", "1100": "Maria Valéria",
+      "1106": "Maria Valéria", "0004": "Mariana Collares", "0616": "Marcelo Rosa", "0690": "Marcello Henrique",
+      "0216": "Marli Cremonini", "0604": "Matheus Silva", "0904": "Matheus Nunes", "1998": "Matheus Nunes",
+      "0500": "Murilo Bellon", "0501": "Murilo Bellon", "0502": "Murilo Bellon", "0503": "Murilo Bellon",
+      "0504": "Murilo Bellon", "1141": "Natalia Roese", "0661": "Natasha Balhejo", "0135": "Neide Dutra",
+      "0149": "Neide Dutra", "0174": "Neide Dutra", "0304": "Neide Dutra", "1958": "Neide Dutra",
+      "1970": "Neide Dutra", "1971": "Neide Dutra", "1972": "Neide Dutra", "1975": "Neide Dutra",
+      "1982": "Neide Dutra", "1996": "Neide Dutra", "1978": "Nicole Machado", "1965": "Nicole Machado",
+      "1966": "Nicole Machado", "0626": "Onofre Ivanczuk", "0953": "Onofre Ivanczuk", "0747": "Onofre Ivanczuk",
+      "0754": "Onofre Ivanczuk", "1202": "Orlando Xandão", "1139": "Osório", "1140": "Osório",
+      "0622": "Paulo Roberto", "1305": "Patrícia Bassotto", "1313": "Patrícia Bassotto", "1322": "Patrícia Bassotto",
+      "1166": "Patrícia Bassotto", "1167": "Patrícia Bassotto", "0200": "Patricia Free", "1399": "Pedro Borba",
+      "1101": "Pedro Borba", "1199": "Pedro Borba", "1194": "Pedro Borba", "1174": "Pedro Borba",
+      "1177": "Pedro Borba", "0159": "Pedro Costa", "0115": "Pedro Costa", "0266": "Pedro Costa",
+      "0368": "Pedro Costa", "0031": "Pedro Silva", "0036": "Pedro Silva", "0038": "Pedro Silva",
+      "0039": "Pedro Silva", "1306": "Pierre Rassier", "1307": "Pierre Rassier", "1710": "Rafael Abreu",
+      "1711": "Rafael Abreu", "1712": "Rafael Abreu", "1713": "Rafael Abreu", "1714": "Rafael Abreu",
+      "1184": "Rafael Abreu", "1185": "Rafael Abreu", "1189": "Rafael Abreu", "0601": "Rafael Souza",
+      "0609": "Raquel Fischer", "0027": "Reginaldo Silveira", "0032": "Reginaldo Silveira", "0059": "Reginaldo Silveira",
+      "0069": "Reginaldo Silveira", "1968": "Reginaldo Silveira", "1997": "Renan Santos", "1245": "Ricardo Iwanczuk",
+      "0464": "Ricardo Iwanczuk", "0880": "Ricardo Iwanczuk", "0347": "Ricardo Iwanczuk", "0977": "Ricardo Iwanczuk",
+      "0527": "Ricardo Iwanczuk", "0781": "Ricardo Iwanczuk", "0021": "Ricardo Iwanczuk", "0299": "Ricardo Iwanczuk",
+      "0060": "Ricardo Iwanczuk", "0058": "Ricardo Iwanczuk", "0211": "Ricardo Iwanczuk", "0198": "Ricardo Iwanczuk",
+      "0199": "Ricardo Iwanczuk", "0148": "Ricardo Iwanczuk", "1327": "Ricardo Iwanczuk", "1329": "Ricardo Iwanczuk",
+      "1330": "Ricardo Iwanczuk", "0710": "Ricardo Iwanczuk", "0800": "Ricardo Iwanczuk", "0801": "Ricardo Iwanczuk",
+      "1016": "Ricardo Iwanczuk", "1017": "Ricardo Iwanczuk", "1018": "Ricardo Iwanczuk", "1019": "Ricardo Iwanczuk",
+      "0900": "Ricardo Iwanczuk", "0902": "Ricardo Iwanczuk", "0903": "Ricardo Iwanczuk", "0005": "Ricardo Vilar",
+      "0010": "Ricardo Vilar", "0009": "Rita Martins", "0121": "Robson Telesforo", "0212": "Robson Telesforo",
+      "1273": "Robson Telesforo", "0912": "Robson Telesforo", "0243": "Rodrigo*", "0003": "Roger Alexandre",
+      "0008": "Roger Alexandre", "0040": "Roger Alexandre", "0051": "Roger Alexandre", "0131": "Roger Alexandre",
+      "0133": "Roger Alexandre", "0134": "Roger Alexandre", "1625": "Roger Alexandre", "0033": "Ronaldo Samsel",
+      "0034": "Ronaldo Samsel", "0035": "Ronaldo Samsel", "1599": "Rosana Duarte", "1943": "Rosana Duarte",
+      "1961": "Rosana Duarte", "1984": "Rosana Duarte", "1986": "Rosana Duarte", "0578": "Rosana Duarte",
+      "0655": "Rosana Duarte", "1959": "Rosana Duarte", "1988": "Rosana Duarte", "0179": "Rosana Duarte",
+      "0261": "Rosana Duarte", "0643": "Rosana Duarte", "1938": "Rosana Duarte", "1945": "Rosana Duarte",
+      "1939": "Rosana Duarte", "0612": "Rosana Duarte", "0699": "Rosana Duarte", "0618": "Rosana Duarte",
+      "0555": "Rosana Duarte", "1555": "Rosana Duarte", "0012": "Roseli Ivankio", "0112": "Roseli Ivankio",
+      "0238": "Roseli Ivankio", "0118": "Roseli Ivankio", "0057": "Roseli Ivankio", "0309": "Roseli Ivankio",
+      "0333": "Roseli Ivankio", "0360": "Roseli Ivankio", "0520": "Roseli Ivankio", "0733": "Roseli Ivankio",
+      "0015": "Roseli Ivankio", "0315": "Roseli Ivankio", "1658": "Roseli Ivankio", "0213": "Rosi Duarte",
+      "0024": "Sabrina Bianca", "0084": "Sabrina Bianca", "0025": "Sandra Claudemir", "0117": "Sandra Claudemir",
+      "0205": "Sandra Claudemir", "0841": "Sandra Claudemir", "0976": "Sandra Claudemir", "1453": "Sandra Maciel",
+      "1454": "Sandra Maciel", "1455": "Sandra Maciel", "1346": "Sérgio Neuwald", "1314": "Sérgio Neuwald",
+      "1169": "Sérgio Neuwald", "1170": "Sérgio Neuwald", "0528": "Sérgio Medeiros", "0535": "Sérgio Medeiros",
+      "0538": "Sérgio Medeiros", "0576": "Sérgio Medeiros", "1186": "Sérgio Medeiros", "1187": "Sérgio Medeiros",
+      "1188": "Sérgio Medeiros", "1162": "Shayanna Oliveira", "1182": "Silvio JF", "1183": "Silvio JF",
+      "1993": "Suelen Soares", "1995": "Suelen Soares", "0042": "Suze Pereira", "0043": "Suze Pereira",
+      "0044": "Suze Pereira", "0045": "Suze Pereira", "0046": "Suze Pereira", "1132": "Suzen Brum",
+      "1147": "Suzen Brum", "0614": "Taline Lima", "0602": "Thales Dias", "0014": "Thiago Marques",
+      "0037": "Thiago Marques", "0089": "Thiago Marques", "0101": "Thiago Marques", "0127": "Thiago Marques",
+      "0153": "Thiago Marques", "0188": "Thiago Marques", "0193": "Thiago Marques", "0209": "Thiago Marques",
+      "0237": "Thiago Marques", "0268": "Thiago Marques", "0290": "Thiago Marques", "0305": "Thiago Marques",
+      "0412": "Thiago Marques", "0467": "Thiago Marques", "0509": "Thiago Marques", "0624": "Thiago Marques",
+      "0793": "Thiago Marques", "1463": "Thiago Marques", "1576": "Thiago Marques", "1729": "Thiago Marques",
+      "1837": "Thiago Marques", "1543": "Thiago Marques", "1687": "Thiago Marques", "1210": "Thiago Marques",
+      "0709": "Thiago Marques", "1317": "Valéria Abreu", "1319": "Valéria Abreu", "1321": "Valéria Abreu",
+      "1324": "Valéria Abreu", "1163": "Valéria Abreu", "1164": "Valéria Abreu", "1165": "Valéria Abreu",
+      "0681": "Victor Uczak", "0666": "Victor Uczak", "0073": "Victor Dutra", "0074": "Victor Dutra",
+      "0078": "Victor Dutra", "0079": "Victor Dutra", "0080": "Victor Dutra", "0081": "Victor Dutra",
+      "0082": "Victor Dutra", "0083": "Victor Dutra", "0086": "Victor Dutra", "0088": "Victor Dutra",
+      "0091": "Victor Dutra", "0092": "Victor Dutra", "0094": "Victor Dutra", "0095": "Victor Dutra",
+      "0098": "Victor Dutra", "0104": "Victor Dutra", "0105": "Victor Dutra", "0106": "Victor Dutra",
+      "0109": "Victor Dutra", "0111": "Victor Dutra", "0533": "Vilane Dalhui", "0189": "Vilma Mota",
+      "0819": "Vilma Mota", "1989": "Vilma Mota", "1977": "Viviane Acosta", "1994": "Viviane Acosta",
+      "0195": "Viviane Acosta", "0847": "Viviane Acosta", "1956": "Viviane Acosta", "0988": "William Tanski",
+      "1112": "William Tanski", "1129": "Wilson Rocha", "1144": "Wilson Rocha", "1151": "Wilson Rocha",
+      "1155": "Wilson Rocha", "1158": "Wilson Rocha", "1160": "Wilson Rocha", "1161": "Wilson Rocha",
+      "1168": "Wilson Rocha", "1171": "Wilson Rocha", "1180": "Wilson Rocha", "0317": "Zenir Hendler",
+      "0318": "Zenir Hendler", "0326": "Zenir Hendler"
+  };
   const totalRifas = 2000;
-  const container = document.getElementById('rifas-container');
-  const popup = document.getElementById('popup');
-  const popupContent = document.getElementById('popup-content');
-  const overlay = document.getElementById('overlay');
-  const contadorDiv = document.getElementById("contador");
   let rifasSelecionadas = [];
 
-  const vendidas = Object.keys(rifasReservadas).length;
-  const disponiveis = totalRifas - vendidas;
-  contadorDiv.innerHTML = `🎟️ <strong>${vendidas}</strong> vendidas • <strong>${disponiveis}</strong> disponíveis`;
+  // --- ELEMENTOS DO DOM ---
+  const container = document.getElementById('rifas-container');
+  const contadorDiv = document.getElementById('contador');
+  const rankingList = document.getElementById('ranking-list');
+  const botaoWhatsapp = document.getElementById('enviar-whatsapp');
 
-  for(let i = 1; i <= totalRifas; i++) {
-    const numStr = i.toString().padStart(4, '0');
-    const div = document.createElement('div');
-    div.classList.add('rifa');
-    if(rifasReservadas[numStr]) {
-      div.classList.add('reservada');
-      div.title = `Reservada por: ${rifasReservadas[numStr]}`;
-      div.innerHTML = `${numStr}<br><small style="font-weight: normal; font-size: 10px; color: #900;">${rifasReservadas[numStr]}</small>`;
-      div.addEventListener('click', () => {
-        popupContent.textContent = `Rifa ${numStr} reservada por: ${rifasReservadas[numStr]}`;
-        popup.style.display = 'block';
-        overlay.style.display = 'block';
-      });
-    } else {
-      div.classList.add('disponivel');
-      div.title = "Disponível";
-      div.textContent = numStr;
-      div.addEventListener('click', () => {
-        div.classList.toggle('selecionada');
-        if (rifasSelecionadas.includes(numStr)) {
-          rifasSelecionadas = rifasSelecionadas.filter(n => n !== numStr);
-        } else {
-          rifasSelecionadas.push(numStr);
-        }
-        atualizarBotaoCompra();
-      });
-    }
-    container.appendChild(div);
-  }
+  // Popup de Rifa Reservada
+  const popupRifa = document.getElementById('popup-rifa');
+  const popupContent = document.getElementById('popup-content');
+  const overlayRifa = document.getElementById('overlay-rifa');
+  const closePopupRifaBtn = document.getElementById('close-popup-rifa');
 
-  function closePopup() {
-    popup.style.display = 'none';
-    overlay.style.display = 'none';
-  }
-  overlay.addEventListener('click', closePopup);
-  document.getElementById('close-popup').addEventListener('click', closePopup);
+  // Popup de Outros Compradores
+  const btnVerOutros = document.getElementById('btn-ver-outros');
+  const popupOutros = document.getElementById('outros-compradores-popup');
+  const overlayOutros = document.getElementById('overlay-outros');
+  const closePopupOutrosBtn = document.getElementById('close-popup-outros');
+  const listaOutrosCompradores = document.getElementById('lista-outros-compradores');
+  const filtroInput = document.getElementById('filtro-compradores');
 
-  function atualizarBotaoCompra() {
-    const botao = document.getElementById('enviar-whatsapp');
-    botao.textContent = `Comprar (${rifasSelecionadas.length})`;
-  }
 
-  document.getElementById('enviar-whatsapp').addEventListener('click', () => {
-    if (rifasSelecionadas.length === 0) {
-      alert('Por favor, selecione pelo menos uma rifa.');
-      return;
-    }
-    const numeros = rifasSelecionadas.join(', ');
-    const texto = `Olá! Gostaria de reservar as seguintes rifas da formatura:\n\nNúmeros: ${numeros}\n\nValor total: R$${(rifasSelecionadas.length * 10).toFixed(2).replace('.', ',')}\n\nVocê pode me passar a chave PIX?`;
-    const numeroWhatsApp = '5511963868134';
-    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texto)}`;
-    window.open(url, '_blank');
+  // --- PROCESSAMENTO DE DADOS E RANKING ---
+  const contagemCompradores = Object.values(rifasReservadas).reduce((acc, comprador) => {
+      acc[comprador] = (acc[comprador] || 0) + 1;
+      return acc;
+  }, {});
+
+  const ranking = Object.entries(contagemCompradores)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10);
+
+  // --- LÓGICA DO RANKING COM EMOJIS ---
+  const emojis = ['🥇', '🥈', '🥉'];
+  ranking.forEach(([nome, qtd], index) => {
+      const li = document.createElement('li');
+      const emojiSpan = document.createElement('span');
+      emojiSpan.className = 'emoji';
+      emojiSpan.textContent = emojis[index] || '⭐'; // Usa medalhas para o top 3, estrela para os demais
+
+      const nomeSpan = document.createElement('span');
+      nomeSpan.className = 'nome';
+      nomeSpan.textContent = nome;
+
+      const qtdSpan = document.createElement('span');
+      qtdSpan.className = 'qtd';
+      qtdSpan.textContent = `${qtd} rifas`;
+      
+      li.appendChild(emojiSpan);
+      li.appendChild(nomeSpan);
+      li.appendChild(qtdSpan);
+      rankingList.appendChild(li);
   });
+
+  const top10Nomes = ranking.map(item => item[0]);
+
+  // --- GERAÇÃO DAS RIFAS ---
+  const vendidas = Object.keys(rifasReservadas).length;
+  contadorDiv.innerHTML = `🎟️ <strong>${vendidas}</strong> vendidas • <strong>${totalRifas - vendidas}</strong> disponíveis`;
+
+  const fragmento = document.createDocumentFragment();
+  for (let i = 1; i <= totalRifas; i++) {
+      const numStr = i.toString().padStart(4, '0');
+      const div = document.createElement('div');
+      div.classList.add('rifa');
+      const comprador = rifasReservadas[numStr];
+
+      if (comprador) {
+          div.classList.add('reservada');
+          div.title = `Reservada por: ${comprador}`;
+          div.innerHTML = `${numStr}<br><small style="font-weight: normal; font-size: 10px; color: #900;">${comprador}</small>`;
+          div.addEventListener('click', () => {
+              popupContent.textContent = `Rifa ${numStr} reservada por: ${comprador}`;
+              popupRifa.style.display = 'flex';
+              overlayRifa.style.display = 'block';
+          });
+      } else {
+          div.classList.add('disponivel');
+          div.title = "Disponível";
+          div.textContent = numStr;
+          div.addEventListener('click', () => {
+              div.classList.toggle('selecionada');
+              const index = rifasSelecionadas.indexOf(numStr);
+              if (index > -1) {
+                  rifasSelecionadas.splice(index, 1);
+              } else {
+                  rifasSelecionadas.push(numStr);
+              }
+              atualizarBotaoCompra();
+          });
+      }
+      fragmento.appendChild(div);
+  }
+  container.appendChild(fragmento);
+
+
+  // --- FUNÇÕES E EVENTOS DOS POPUPS ---
+  function closePopupRifa() {
+      popupRifa.style.display = 'none';
+      overlayRifa.style.display = 'none';
+  }
+  overlayRifa.addEventListener('click', closePopupRifa);
+  closePopupRifaBtn.addEventListener('click', closePopupRifa);
+
+  function closePopupOutros() {
+      popupOutros.style.display = 'none';
+      overlayOutros.style.display = 'none';
+  }
+  overlayOutros.addEventListener('click', closePopupOutros);
+  closePopupOutrosBtn.addEventListener('click', closePopupOutros);
+
+
+  // --- LISTA DE OUTROS COMPRADORES ---
+  btnVerOutros.addEventListener('click', () => {
+      // Agrupa rifas por comprador
+      const compradoresAgrupados = Object.entries(rifasReservadas).reduce((acc, [rifa, nome]) => {
+          if (!acc[nome]) {
+              acc[nome] = [];
+          }
+          acc[nome].push(rifa);
+          return acc;
+      }, {});
+
+      // Filtra, ordena e popula a lista
+      listaOutrosCompradores.innerHTML = '';
+      const outrosCompradores = Object.entries(compradoresAgrupados)
+          .filter(([nome]) => !top10Nomes.includes(nome))
+          .sort((a, b) => a[0].localeCompare(b[0]));
+
+      outrosCompradores.forEach(([nome, rifas]) => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${nome}:</strong> ${rifas.join(', ')}`;
+          listaOutrosCompradores.appendChild(li);
+      });
+
+      popupOutros.style.display = 'flex';
+      overlayOutros.style.display = 'block';
+  });
+
+  filtroInput.addEventListener('keyup', () => {
+      const filtro = filtroInput.value.toLowerCase();
+      const items = listaOutrosCompradores.getElementsByTagName('li');
+      Array.from(items).forEach(item => {
+          const nome = item.textContent || item.innerText;
+          item.style.display = nome.toLowerCase().includes(filtro) ? '' : 'none';
+      });
+  });
+
+
+  // --- FUNCIONALIDADE DE COMPRA ---
+  function atualizarBotaoCompra() {
+      botaoWhatsapp.textContent = `Comprar (${rifasSelecionadas.length})`;
+  }
+
+  botaoWhatsapp.addEventListener('click', () => {
+      if (rifasSelecionadas.length === 0) {
+          alert('Por favor, selecione pelo menos uma rifa.');
+          return;
+      }
+      const numeros = rifasSelecionadas.sort().join(', ');
+      const valorTotal = (rifasSelecionadas.length * 10).toFixed(2).replace('.', ',');
+      const texto = `Olá! Gostaria de reservar as seguintes rifas da formatura:\n\n*Números:* ${numeros}\n\n*Valor total:* R$${valorTotal}\n\nVocê pode me passar a chave PIX?`;
+      const numeroWhatsApp = '5511963868134'; // Substitua pelo número correto
+      const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texto)}`;
+      window.open(url, '_blank');
+  });
+
+});
 </script>
 </body>
 </html>
