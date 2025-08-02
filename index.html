@@ -11,7 +11,7 @@
 <style>
   /* Estilos Gerais */
   body {
-    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte aplicada */
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f5f7fa;
     margin: 0;
     padding: 20px;
@@ -52,18 +52,18 @@
     font-weight: 700;
   }
   .maiores-compradores ol {
-    padding-left: 0; /* Removido padding padrão da lista */
+    padding-left: 0;
     margin: 20px 0 0 0;
     font-size: 1.1rem;
     color: #555;
-    max-width: 400px; /* Aumentado para acomodar o novo estilo */
+    max-width: 400px;
     margin-left: auto;
     margin-right: auto;
     text-align: left;
-    list-style: none; /* Removida a numeração padrão */
+    list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Espaçamento entre os cards */
+    gap: 12px;
   }
   .maiores-compradores li {
     display: flex;
@@ -83,7 +83,7 @@
   }
   .maiores-compradores li .nome {
       font-weight: 600;
-      flex-grow: 1; /* Faz o nome ocupar o espaço disponível */
+      flex-grow: 1;
       color: #34495e;
   }
   .maiores-compradores li .qtd {
@@ -94,7 +94,6 @@
       border-radius: 20px;
       font-size: 0.9em;
   }
-  /* Estilos especiais para o Top 3 */
   .maiores-compradores li:nth-child(1) {
       background: linear-gradient(135deg, #ffd700, #ffc700);
   }
@@ -113,7 +112,6 @@
   .maiores-compradores li:nth-child(3) .qtd {
       background-color: #a05a15;
   }
-  /* --- FIM DO RANKING MODERNIZADO --- */
 
   /* Botão para ver outros compradores */
   #btn-ver-outros {
@@ -227,7 +225,7 @@
     z-index: 1000;
     max-width: 90vw;
     max-height: 80vh;
-    display: flex;
+    /* A linha 'display: flex' foi REMOVIDA daqui para corrigir o bug */
     flex-direction: column;
   }
   .popup-small {
@@ -274,10 +272,10 @@
       text-align: left;
   }
   #lista-outros-compradores li {
-      padding: 10px 8px; /* Mais espaçamento vertical */
+      padding: 10px 8px;
       border-bottom: 1px solid #eee;
-      display: flex; /* Usando flexbox para alinhar */
-      justify-content: space-between; /* Alinha nome e quantidade */
+      display: flex;
+      justify-content: space-between;
       align-items: center;
   }
   #lista-outros-compradores li:last-child {
@@ -287,7 +285,7 @@
       color: #34495e;
       font-weight: 600;
   }
-  #lista-outros-compradores .total-rifas { /* Nova classe para a quantidade */
+  #lista-outros-compradores .total-rifas {
       font-weight: 600;
       color: #fff;
       background-color: #5dade2;
