@@ -17,7 +17,6 @@
     padding: 20px;
     color: #333;
     position: relative;
-    /* Cursor padrão foi restaurado para melhor usabilidade */
     cursor: default;
   }
   h1 {
@@ -35,8 +34,9 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -1;
-    pointer-events: none;
+    /* z-index ajustado para ficar na frente de tudo */
+    z-index: 9999;
+    pointer-events: none; /* Crucial para permitir cliques nos elementos abaixo */
   }
 
   /* --- SEÇÃO MAIORES COMPRADORES (RANKING MODERNIZADO) --- */
@@ -381,30 +381,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const mouse = { x: undefined, y: undefined };
   let particlesArray = [];
-  // Nova paleta de cores "Barbie"
   const colors = ['#E0218A', '#F984C3', '#F2228A', '#ffffff', '#FED9E9'];
 
   class Particle {
       constructor(x, y) {
           this.x = x;
           this.y = y;
-          this.size = Math.random() * 6 + 1; // Tamanho variado para parecer brilho
+          this.size = Math.random() * 6 + 1;
           this.speedX = Math.random() * 2 - 1;
           this.speedY = Math.random() * 2 - 1;
           this.color = colors[Math.floor(Math.random() * colors.length)];
-          this.life = 1; // Opacidade inicial
-          this.decay = Math.random() * 0.02 + 0.01; // Taxa de desaparecimento
+          this.life = 1;
+          this.decay = Math.random() * 0.02 + 0.01;
       }
-      // Atualiza a posição, tamanho e opacidade
       update() {
           this.x += this.speedX;
           this.y += this.speedY;
-          this.speedY += 0.03; // Efeito de gravidade suave
+          this.speedY += 0.03;
           this.life -= this.decay;
       }
-      // Desenha a partícula no canvas
       draw() {
-          ctx.globalAlpha = this.life; // Aplica a opacidade
+          ctx.globalAlpha = this.life;
           ctx.fillStyle = this.color;
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -425,14 +422,13 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('mousemove', (event) => {
     mouse.x = event.x;
     mouse.y = event.y;
-    // Gera mais partículas para um efeito de brilho mais intenso
     for (let i = 0; i < 5; i++) {
         particlesArray.push(new Particle(mouse.x, mouse.y));
     }
   });
 
   function animate() {
-      ctx.globalAlpha = 1; // Reseta a opacidade global
+      ctx.globalAlpha = 1;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       handleParticles();
       requestAnimationFrame(animate);
@@ -443,8 +439,6 @@ document.addEventListener('DOMContentLoaded', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
   });
-  // --- FIM DO CURSOR DE BRILHO ---
-
 
   // --- DADOS E CONSTANTES DA RIFA ---
   const rifasReservadas = {
