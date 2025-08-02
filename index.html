@@ -34,9 +34,8 @@
     position: fixed;
     top: 0;
     left: 0;
-    /* z-index ajustado para ficar na frente de tudo */
     z-index: 9999;
-    pointer-events: none; /* Crucial para permitir cliques nos elementos abaixo */
+    pointer-events: none;
   }
 
   /* --- SEÇÃO MAIORES COMPRADORES (RANKING MODERNIZADO) --- */
@@ -566,7 +565,8 @@ document.addEventListener('DOMContentLoaded', () => {
       listaOutrosCompradores.innerHTML = '';
       const outrosCompradores = Object.entries(compradoresAgrupados)
           .filter(([nome]) => !top10Nomes.includes(nome))
-          .sort((a, b) => a[0].localeCompare(b[0]));
+          // ORDENAÇÃO ALTERADA AQUI:
+          .sort((a, b) => b[1].length - a[1].length); // b[1] é a lista de rifas do comprador B
 
       outrosCompradores.forEach(([nome, rifas]) => {
           const li = document.createElement('li');
