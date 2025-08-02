@@ -12,7 +12,9 @@
   /* Estilos Gerais */
   body {
     font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
+    /* NOVO FUNDO GRADIENTE */
+    background: linear-gradient(to bottom right, #fce3ec, #f0e6ff);
+    background-attachment: fixed; /* Mantém o gradiente fixo no scroll */
     margin: 0;
     padding: 20px;
     color: #333;
@@ -565,8 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
       listaOutrosCompradores.innerHTML = '';
       const outrosCompradores = Object.entries(compradoresAgrupados)
           .filter(([nome]) => !top10Nomes.includes(nome))
-          // ORDENAÇÃO ALTERADA AQUI:
-          .sort((a, b) => b[1].length - a[1].length); // b[1] é a lista de rifas do comprador B
+          .sort((a, b) => b[1].length - a[1].length);
 
       outrosCompradores.forEach(([nome, rifas]) => {
           const li = document.createElement('li');
