@@ -274,14 +274,26 @@
       text-align: left;
   }
   #lista-outros-compradores li {
-      padding: 8px 4px;
+      padding: 10px 8px; /* Mais espaçamento vertical */
       border-bottom: 1px solid #eee;
+      display: flex; /* Usando flexbox para alinhar */
+      justify-content: space-between; /* Alinha nome e quantidade */
+      align-items: center;
   }
   #lista-outros-compradores li:last-child {
       border-bottom: none;
   }
   #lista-outros-compradores strong {
       color: #34495e;
+      font-weight: 600;
+  }
+  #lista-outros-compradores .total-rifas { /* Nova classe para a quantidade */
+      font-weight: 600;
+      color: #fff;
+      background-color: #5dade2;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.9em;
   }
 
 
@@ -585,13 +597,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .sort(([, a], [, b]) => b - a)
       .slice(0, 10);
 
-  // --- LÓGICA DO RANKING COM EMOJIS ---
+  // LÓGICA DO RANKING COM EMOJIS
   const emojis = ['🥇', '🥈', '🥉'];
   ranking.forEach(([nome, qtd], index) => {
       const li = document.createElement('li');
       const emojiSpan = document.createElement('span');
       emojiSpan.className = 'emoji';
-      emojiSpan.textContent = emojis[index] || '⭐'; // Usa medalhas para o top 3, estrela para os demais
+      emojiSpan.textContent = emojis[index] || '⭐';
 
       const nomeSpan = document.createElement('span');
       nomeSpan.className = 'nome';
@@ -684,7 +696,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       outrosCompradores.forEach(([nome, rifas]) => {
           const li = document.createElement('li');
-          li.innerHTML = `<strong>${nome}:</strong> ${rifas.join(', ')}`;
+          const total = rifas.length;
+          const textoRifa = total > 1 ? 'rifas' : 'rifa';
+          
+          li.innerHTML = `<strong>${nome}</strong><span class="total-rifas">${total} ${textoRifa}</span>`;
           listaOutrosCompradores.appendChild(li);
       });
 
