@@ -1221,7 +1221,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const numeros = rifasSelecionadas.sort().join(', ');
       const valorTotal = (rifasSelecionadas.length * 10).toFixed(2).replace('.', ',');
-      const texto = `Olá! Gostaria de reservar as seguintes rifas da formatura:\n\n*Números:* ${numeros}\n\n*Valor total:* R$${valorTotal}\n\n PAGUE AGORA NO PIX: 863.853.990-87`;
+      const texto = `Olá! Gostaria de reservar as seguintes rifas da formatura:\n\n*Números:* ${numeros}\n\n*Valor total:* R$${valorTotal}\n\nPAGUE AGORA NO PIX: 863.853.990-87`;
       const numeroWhatsApp = '5511963868134'; // Substitua pelo número correto
       const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texto)}`;
       window.open(url, '_blank');
@@ -1231,6 +1231,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
